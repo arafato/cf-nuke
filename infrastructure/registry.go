@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/arafato/cf-nuke/resources"
+	"github.com/arafato/cf-nuke/types"
 )
 
-var listers = make(map[string]resources.Resource)
+var listers = make(map[string]types.ResourceLister)
 
-func Register(name string, resource resources.Resource) error {
+func Register(name string, lister types.ResourceLister) error {
 	var mu = sync.Mutex{}
 	mu.Lock()
 	defer mu.Unlock()
@@ -17,6 +17,6 @@ func Register(name string, resource resources.Resource) error {
 	if _, exists := listers[name]; exists {
 		return fmt.Errorf("handler %s already registered", name)
 	}
-	listers[name] = resource
+	listers[name] = lister
 	return nil
 }

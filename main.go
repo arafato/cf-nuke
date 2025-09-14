@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	_ "github.com/arafato/cf-nuke/resources"
+)
 
 func main() {
-	fmt.Println("Hello, world!")
+	fmt.Println("CF-Nuke.")
 }
