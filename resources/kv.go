@@ -39,7 +39,6 @@ func CollectKV(creds *types.Credentials) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Finished Collecting KV resources...")
 
 	for _, kv := range allKVs {
 		res := types.Resource{
