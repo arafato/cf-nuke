@@ -19,14 +19,12 @@ var (
 	noDryRun   bool
 )
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "cf-nuke",
 	Short: "cf-nuke removes every resource from your cloudflare account",
 	Long:  `A tool which removes every resource from an cloudflare account.  Use it with caution, since it cannot distinguish between production and non-production.`,
 }
 
-// nukeCmd represents the nuke command
 var nukeCmd = &cobra.Command{
 	Use:   "nuke",
 	Short: "Execute nuke operation",
@@ -69,10 +67,8 @@ func executeNuke() {
 		}
 		_ = config // Use the config in your logic
 	*/
-	// PLACEHOLDER: Execute your main logic
 	if noDryRun {
 		fmt.Println("Executing actual nuke operation...")
-		// Your actual destructive operation here
 
 	} else {
 		fmt.Println("Performing dry run...")
@@ -82,9 +78,9 @@ func executeNuke() {
 			APIKey:    key,
 		})
 
-		fmt.Printf("Found %d resources:\n", len(resources))
+		fmt.Printf("Scan complete: Found %d resources in account %s:\n", len(resources), accountId)
 		for _, resource := range resources {
-			fmt.Printf("%s - %s - %s\n", resource.AccountID, resource.ProductName, resource.ResourceID)
+			fmt.Printf("%s - \033[32m%s\033[0m - %s\n", resource.ProductName, resource.ResourceName, resource.ResourceID)
 		}
 	}
 }
