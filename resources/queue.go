@@ -2,7 +2,6 @@ package resources
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/option"
@@ -16,28 +15,41 @@ func init() {
 	infrastructure.RegisterCollector("queue", CollectQueues)
 }
 
-type Queue struct{}
+type Queue struct {
+	Client *cloudflare.Client
+}
 
-func CollectQueues(creds *types.Credentials) ([]types.Resource, error) {
+var ProductName = "Queue"
+
+func CollectQueues(creds *types.Credentials) error {
 	client := cloudflare.NewClient(
 		option.WithAPIToken(creds.APIKey))
+
+	var allQueues []queues.Queue
 
 	page, err := client.Queues.List(context.TODO(), queues.QueueListParams{
 		AccountID: cloudflare.F(creds.AccountId),
 	})
 
-	var res = types.Resource{
-		Removable:   Queue{},
-		ID:          "id",
-		ProductName: "Queue",
+	for page != nil {
+		allQueues = append(allQueues, page.Result...)
+		page, err = page.GetNextPage()
+	}
+	if err != nil {
+		return err
 	}
 
-	if err != nil {
-		panic(err.Error())
+	for _, queue := range allQueues {
+		res := types.Resource{
+			Removable:   Queue{Client: client},
+			ID:          queue.QueueID,
+			ProductName: ProductName,
+		}
+
+		infrastructure.CollectResource(&res)
 	}
-	fmt.Printf("%+v\n", page)
-	// create a
-	return nil, nil
+
+	return nil
 }
 
 func (Queue) Remove() error {

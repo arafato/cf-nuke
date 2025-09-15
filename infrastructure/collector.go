@@ -23,6 +23,10 @@ func RegisterCollector(name string, lister types.ResourceCollector) error {
 	return nil
 }
 
+func ProcessCollection() types.Resources {
+	return nil
+}
+
 func CollectResource(resource *types.Resource) {
 	resourceCollectionChan <- resource
 }
