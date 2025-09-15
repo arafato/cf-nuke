@@ -1,12 +1,13 @@
 package types
 
 type Removable interface {
-	Remove() error
+	Remove(accountID string, resourceID string) error
 }
 
 type Resource struct {
-	Removable   Removable
-	ID          string
+	Removable
+	AccountID   string
+	ResourceID  string
 	ProductName string
 }
 

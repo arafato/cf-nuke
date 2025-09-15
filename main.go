@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/arafato/cf-nuke/infrastructure"
+	"github.com/arafato/cf-nuke/types"
 	"github.com/spf13/cobra"
 )
 
@@ -72,13 +74,19 @@ func executeNuke() {
 
 	} else {
 		fmt.Println("Performing dry run...")
-		// Your dry run logic here
-	}
 
-	fmt.Println("Nuke operation completed successfully!")
+		resources := infrastructure.ProcessCollection(&types.Credentials{
+			AccountID: accountId,
+			APIKey:    key,
+		})
+
+		fmt.Printf("Found %d resources:\n", len(resources))
+		for _, resource := range resources {
+			fmt.Printf("%s - %s - %s\n", resource.AccountID, resource.ProductName, resource.ResourceID)
+		}
+	}
 }
 
-// PLACEHOLDER: Implement your config loading logic
 func loadConfig(configPath string) {
 
 }
@@ -89,35 +97,3 @@ func main() {
 		os.Exit(1)
 	}
 }
-
-/*
- var allItems []*Item
-    var scanWg sync.WaitGroup
-    itemCollectChan := make(chan *Item, 1000)
-
-    // Start all scanners
-    scanners := []Scanner{dnsScanner, workerScanner, pageRuleScanner}
-    for _, scanner := range scanners {
-        scanWg.Add(1)
-        go func(s Scanner) {
-            defer scanWg.Done()
-            s.Scan(itemCollectChan) // Just collect, don't delete yet
-        }(scanner)
-    }
-
-    // Collect items while scanners run
-    go func() {
-        scanWg.Wait()           // Wait for ALL scanners to finish
-        close(itemCollectChan)  // Then close collection channel
-    }()
-
-    // Gather all items
-    for item := range itemCollectChan {
-        allItems = append(allItems, item)
-    }
-
-    fmt.Printf("✅ Scanning complete. Found %d items\n", len(allItems))
-
-    // Phase 2: NOW start deletion with complete list
-    startDeletionPhase(allItems)
-*/

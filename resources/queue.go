@@ -16,7 +16,7 @@ func init() {
 }
 
 type Queue struct {
-	Client *cloudflare.Client
+	Client *queues.QueueService
 }
 
 var ProductName = "Queue"
@@ -28,7 +28,7 @@ func CollectQueues(creds *types.Credentials) error {
 	var allQueues []queues.Queue
 
 	page, err := client.Queues.List(context.TODO(), queues.QueueListParams{
-		AccountID: cloudflare.F(creds.AccountId),
+		AccountID: cloudflare.F(creds.AccountID),
 	})
 
 	for page != nil {
@@ -41,8 +41,9 @@ func CollectQueues(creds *types.Credentials) error {
 
 	for _, queue := range allQueues {
 		res := types.Resource{
-			Removable:   Queue{Client: client},
-			ID:          queue.QueueID,
+			Removable:   Queue{Client: client.Queues},
+			ResourceID:  queue.QueueID,
+			AccountID:   creds.AccountID,
 			ProductName: ProductName,
 		}
 
@@ -52,6 +53,9 @@ func CollectQueues(creds *types.Credentials) error {
 	return nil
 }
 
-func (Queue) Remove() error {
+func (q Queue) Remove(accountID string, resourceID string) error {
+	q.Client.Delete(context.TODO(), resourceID, queues.QueueDeleteParams{
+		AccountID: cloudflare.F(accountID),
+	})
 	return nil
 }
