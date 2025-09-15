@@ -2,7 +2,6 @@ package resources
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/cloudflare/cloudflare-go/v3"
 	"github.com/cloudflare/cloudflare-go/v3/kv"
@@ -25,13 +24,13 @@ func CollectKV(creds *types.Credentials) error {
 		option.WithAPIToken(creds.APIKey),
 	)
 
-	fmt.Println("Collecting KV resources...")
 	page, err := client.KV.Namespaces.List(context.TODO(), kv.NamespaceListParams{
 		AccountID: cloudflare.F(creds.AccountID),
 	})
 
 	var allKVs []kv.Namespace
 
+	// page is never nil
 	for len(page.Result) != 0 {
 		allKVs = append(allKVs, page.Result...)
 		page, err = page.GetNextPage()
