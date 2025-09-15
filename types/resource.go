@@ -6,9 +6,10 @@ type Removable interface {
 
 type Resource struct {
 	Removable
-	AccountID   string
-	ResourceID  string
-	ProductName string
+	AccountID    string
+	ResourceID   string
+	ResourceName string
+	ProductName  string
 }
 
 type ResourceCollector func(*Credentials) error

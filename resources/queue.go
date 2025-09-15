@@ -19,8 +19,6 @@ type Queue struct {
 	Client *queues.QueueService
 }
 
-var ProductName = "Queue"
-
 func CollectQueues(creds *types.Credentials) error {
 	client := cloudflare.NewClient(
 		option.WithAPIToken(creds.APIKey))
@@ -41,10 +39,11 @@ func CollectQueues(creds *types.Credentials) error {
 
 	for _, queue := range allQueues {
 		res := types.Resource{
-			Removable:   Queue{Client: client.Queues},
-			ResourceID:  queue.QueueID,
-			AccountID:   creds.AccountID,
-			ProductName: ProductName,
+			Removable:    Queue{Client: client.Queues},
+			ResourceID:   queue.QueueID,
+			ResourceName: queue.QueueName,
+			AccountID:    creds.AccountID,
+			ProductName:  "Queue",
 		}
 
 		infrastructure.CollectResource(&res)
