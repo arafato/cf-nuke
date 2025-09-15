@@ -7,16 +7,22 @@ import (
 	"github.com/arafato/cf-nuke/types"
 )
 
-var listers = make(map[string]types.ResourceLister)
+var collectors = make(map[string]types.ResourceCollector)
 
-func Register(name string, lister types.ResourceLister) error {
+var resourceCollectionChan = make(chan *types.Resource, 100)
+
+func RegisterCollector(name string, lister types.ResourceCollector) error {
 	var mu = sync.Mutex{}
 	mu.Lock()
 	defer mu.Unlock()
 
-	if _, exists := listers[name]; exists {
+	if _, exists := collectors[name]; exists {
 		return fmt.Errorf("handler %s already registered", name)
 	}
-	listers[name] = lister
+	collectors[name] = lister
 	return nil
+}
+
+func CollectResource(resource *types.Resource) {
+	resourceCollectionChan <- resource
 }
