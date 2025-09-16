@@ -3,9 +3,9 @@ package resources
 import (
 	"context"
 
-	"github.com/cloudflare/cloudflare-go/v3"
-	"github.com/cloudflare/cloudflare-go/v3/option"
-	"github.com/cloudflare/cloudflare-go/v3/workers"
+	"github.com/cloudflare/cloudflare-go/v6"
+	"github.com/cloudflare/cloudflare-go/v6/option"
+	"github.com/cloudflare/cloudflare-go/v6/workers"
 
 	"github.com/arafato/cf-nuke/infrastructure"
 	"github.com/arafato/cf-nuke/types"
@@ -56,7 +56,7 @@ func CollectWorkers(creds *types.Credentials) (types.Resources, error) {
 }
 
 func (c WorkersScripts) Remove(accountID string, resourceID string) error {
-	err := c.Client.Delete(context.TODO(), resourceID, workers.ScriptDeleteParams{
+	_, err := c.Client.Delete(context.TODO(), resourceID, workers.ScriptDeleteParams{
 		AccountID: cloudflare.F(accountID)})
 
 	return err
