@@ -1,5 +1,13 @@
 package types
 
+import (
+	"context"
+	"errors"
+	"strings"
+
+	"github.com/cenkalti/backoff/v5"
+)
+
 type Removable interface {
 	Remove(accountID string, resourceID string) error
 }
@@ -20,9 +28,32 @@ type Resources []*Resource
 type ResourceState int
 
 const (
-	ResourceStatePending = iota
+	ResourceStateRemoving = iota
 	ResourceStateReady
 	ResourceStateDeleted
 	ResourceStateFailed
 	ResourceStateFiltered
 )
+
+func (r *Resource) Remove() error {
+	operation := func() (struct{}, error) {
+		r.State = ResourceStateRemoving
+		err := r.Removable.Remove(r.AccountID, r.ResourceID)
+		if err != nil {
+			if strings.Contains(err.Error(), "401 Unauthorized") {
+				return struct{}{}, backoff.Permanent(errors.New("Unauthorized Request"))
+			}
+			return struct{}{}, err
+		}
+		return struct{}{}, nil
+	}
+
+	_, err := backoff.Retry(context.TODO(), operation, backoff.WithBackOff(backoff.NewExponentialBackOff()), backoff.WithMaxTries(3))
+	if err != nil {
+		r.State = ResourceStateFailed
+		return err
+	}
+
+	r.State = ResourceStateDeleted
+	return nil
+}
