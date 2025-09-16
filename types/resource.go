@@ -25,19 +25,20 @@ type ResourceCollector func(*Credentials) (Resources, error)
 
 type Resources []*Resource
 
+//go:generate stringer -type=ResourceState
 type ResourceState int
 
 const (
-	ResourceStateRemoving = iota
-	ResourceStateReady
-	ResourceStateDeleted
-	ResourceStateFailed
-	ResourceStateFiltered
+	Removing ResourceState = iota
+	Ready
+	Deleted
+	Failed
+	Filtered
 )
 
 func (r *Resource) Remove() error {
 	operation := func() (struct{}, error) {
-		r.State = ResourceStateRemoving
+		r.State = Removing
 		err := r.Removable.Remove(r.AccountID, r.ResourceID)
 		if err != nil {
 			if strings.Contains(err.Error(), "401 Unauthorized") {
@@ -50,10 +51,20 @@ func (r *Resource) Remove() error {
 
 	_, err := backoff.Retry(context.TODO(), operation, backoff.WithBackOff(backoff.NewExponentialBackOff()), backoff.WithMaxTries(3))
 	if err != nil {
-		r.State = ResourceStateFailed
+		r.State = Failed
 		return err
 	}
 
-	r.State = ResourceStateDeleted
+	r.State = Deleted
 	return nil
+}
+
+func (r Resources) NumOf(state ResourceState) int {
+	count := 0
+	for _, resource := range r {
+		if resource.State == state {
+			count++
+		}
+	}
+	return count
 }
