@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
 	"os"
+	"sync"
 
 	_ "github.com/arafato/cf-nuke/resources"
+	"github.com/arafato/cf-nuke/utils"
 
 	"github.com/arafato/cf-nuke/infrastructure"
 	"github.com/arafato/cf-nuke/types"
@@ -67,21 +71,45 @@ func executeNuke() {
 		}
 		_ = config // Use the config in your logic
 	*/
-	if noDryRun {
-		fmt.Println("Executing actual nuke operation...")
+
+	resources := infrastructure.ProcessCollection(&types.Credentials{
+		AccountID: accountId,
+		APIKey:    key,
+	})
+
+	fmt.Printf("Scan complete: Found %d removable resources in account %s:\n", resources.NumOf(types.Ready), accountId)
+	utils.PrettyPrintStatus(resources)
+
+	if !noDryRun {
+		fmt.Println("Dry run complete.")
 
 	} else {
-		fmt.Println("Performing dry run...")
-
-		resources := infrastructure.ProcessCollection(&types.Credentials{
-			AccountID: accountId,
-			APIKey:    key,
-		})
-
-		fmt.Printf("Scan complete: Found %d resources in account %s:\n", len(resources), accountId)
-		for _, resource := range resources {
-			fmt.Printf("%s - \033[32m%s\033[0m - %s\n", resource.ProductName, resource.ResourceName, resource.ResourceID)
+		fmt.Println("Executing actual nuke operation... do you really want to continue (yes/no)?")
+		var confirm string
+		fmt.Scanln(&confirm)
+		if confirm != "yes" {
+			fmt.Println("Nuke operation aborted.")
+			return
 		}
+		fmt.Println("Nuke operation confirmed.")
+		utils.PrettyPrintStatus(resources)
+
+		var wg sync.WaitGroup
+		ctx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		wg.Add(1)
+		go utils.PrintStatusWithContext(&wg, ctx, resources)
+
+		if err := infrastructure.RemoveCollection(ctx, resources); err != nil {
+			log.Printf("Error removing resources: %v", err)
+		}
+
+		cancel()
+		// Waiting for everything to finish, in this case the status printer
+		wg.Wait()
+
+		fmt.Println("Process finished.")
 	}
 }
 
