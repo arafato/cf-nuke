@@ -19,7 +19,7 @@ type KV struct {
 	Client *kv.KVService
 }
 
-func CollectKV(creds *types.Credentials) error {
+func CollectKV(creds *types.Credentials) (types.Resources, error) {
 	client := cloudflare.NewClient(
 		option.WithAPIToken(creds.APIKey),
 	)
@@ -31,7 +31,7 @@ func CollectKV(creds *types.Credentials) error {
 	var allKVs []kv.Namespace
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for len(page.Result) != 0 {
@@ -39,6 +39,7 @@ func CollectKV(creds *types.Credentials) error {
 		page, err = page.GetNextPage()
 	}
 
+	var allResources types.Resources
 	for _, kv := range allKVs {
 		res := types.Resource{
 			Removable:    KV{Client: client.KV},
@@ -47,10 +48,10 @@ func CollectKV(creds *types.Credentials) error {
 			AccountID:    creds.AccountID,
 			ProductName:  "KV",
 		}
-		infrastructure.CollectResource(&res)
+		allResources = append(allResources, &res)
 	}
 
-	return nil
+	return allResources, nil
 }
 
 func (q KV) Remove(accountID string, resourceID string) error {

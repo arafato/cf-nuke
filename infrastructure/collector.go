@@ -33,7 +33,14 @@ func ProcessCollection(creds *types.Credentials) types.Resources {
 	for _, collector := range collectors {
 		c := collector
 		g.Go(func() error {
-			return c(creds)
+			resources, err := c(creds)
+			if err != nil {
+				return err
+			}
+			for _, resource := range resources {
+				resourceCollectionChan <- resource
+			}
+			return nil
 		})
 	}
 
@@ -52,8 +59,4 @@ func ProcessCollection(creds *types.Credentials) types.Resources {
 	}
 
 	return allResources
-}
-
-func CollectResource(resource *types.Resource) {
-	resourceCollectionChan <- resource
 }

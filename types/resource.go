@@ -12,6 +12,6 @@ type Resource struct {
 	ProductName  string
 }
 
-type ResourceCollector func(*Credentials) error
+type ResourceCollector func(*Credentials) (Resources, error)
 
 type Resources []*Resource

@@ -19,7 +19,7 @@ type Queue struct {
 	Client *queues.QueueService
 }
 
-func CollectQueues(creds *types.Credentials) error {
+func CollectQueues(creds *types.Credentials) (types.Resources, error) {
 	client := cloudflare.NewClient(
 		option.WithAPIToken(creds.APIKey))
 
@@ -30,7 +30,7 @@ func CollectQueues(creds *types.Credentials) error {
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for page != nil {
@@ -38,6 +38,7 @@ func CollectQueues(creds *types.Credentials) error {
 		page, err = page.GetNextPage()
 	}
 
+	var allResources types.Resources
 	for _, queue := range allQueues {
 		res := types.Resource{
 			Removable:    Queue{Client: client.Queues},
@@ -47,10 +48,10 @@ func CollectQueues(creds *types.Credentials) error {
 			ProductName:  "Queue",
 		}
 
-		infrastructure.CollectResource(&res)
+		allResources = append(allResources, &res)
 	}
 
-	return nil
+	return allResources, nil
 }
 
 func (q Queue) Remove(accountID string, resourceID string) error {
