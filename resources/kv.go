@@ -30,13 +30,13 @@ func CollectKV(creds *types.Credentials) error {
 
 	var allKVs []kv.Namespace
 
-	// page is never nil
+	if err != nil {
+		return err
+	}
+
 	for len(page.Result) != 0 {
 		allKVs = append(allKVs, page.Result...)
 		page, err = page.GetNextPage()
-	}
-	if err != nil {
-		return err
 	}
 
 	for _, kv := range allKVs {

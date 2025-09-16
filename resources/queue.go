@@ -29,12 +29,13 @@ func CollectQueues(creds *types.Credentials) error {
 		AccountID: cloudflare.F(creds.AccountID),
 	})
 
+	if err != nil {
+		return err
+	}
+
 	for page != nil {
 		allQueues = append(allQueues, page.Result...)
 		page, err = page.GetNextPage()
-	}
-	if err != nil {
-		return err
 	}
 
 	for _, queue := range allQueues {
