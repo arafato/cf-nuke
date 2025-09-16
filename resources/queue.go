@@ -46,6 +46,7 @@ func CollectQueues(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: queue.QueueName,
 			AccountID:    creds.AccountID,
 			ProductName:  "Queue",
+			State:        types.ResourceStateReady,
 		}
 
 		allResources = append(allResources, &res)
@@ -55,8 +56,9 @@ func CollectQueues(creds *types.Credentials) (types.Resources, error) {
 }
 
 func (q Queue) Remove(accountID string, resourceID string) error {
-	q.Client.Delete(context.TODO(), resourceID, queues.QueueDeleteParams{
+	_, err := q.Client.Delete(context.TODO(), resourceID, queues.QueueDeleteParams{
 		AccountID: cloudflare.F(accountID),
 	})
-	return nil
+
+	return err
 }

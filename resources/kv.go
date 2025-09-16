@@ -47,6 +47,7 @@ func CollectKV(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: kv.Title,
 			AccountID:    creds.AccountID,
 			ProductName:  "KV",
+			State:        types.ResourceStateReady,
 		}
 		allResources = append(allResources, &res)
 	}
@@ -54,6 +55,9 @@ func CollectKV(creds *types.Credentials) (types.Resources, error) {
 	return allResources, nil
 }
 
-func (q KV) Remove(accountID string, resourceID string) error {
-	return nil
+func (c KV) Remove(accountID string, resourceID string) error {
+	_, err := c.Client.Namespaces.Delete(context.TODO(), resourceID, kv.NamespaceDeleteParams{
+		AccountID: cloudflare.F(accountID)})
+
+	return err
 }
