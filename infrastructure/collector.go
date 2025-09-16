@@ -2,7 +2,10 @@ package infrastructure
 
 import (
 	"fmt"
+	"os"
 	"sync"
+
+	"golang.org/x/sync/errgroup"
 
 	"github.com/arafato/cf-nuke/types"
 )
@@ -25,19 +28,24 @@ func RegisterCollector(name string, collector types.ResourceCollector) error {
 
 func ProcessCollection(creds *types.Credentials) types.Resources {
 	var allResources types.Resources
-	var wg sync.WaitGroup
+	g := new(errgroup.Group)
+
 	for _, collector := range collectors {
-		wg.Add(1)
-		go func(c types.ResourceCollector) {
-			defer wg.Done()
-			c(creds)
-		}(collector)
+		c := collector
+		g.Go(func() error {
+			return c(creds)
+		})
 	}
 
 	go func() {
-		wg.Wait()
+		_ = g.Wait()
 		close(resourceCollectionChan)
 	}()
+
+	if err := g.Wait(); err != nil {
+		fmt.Println("Error during collection, aborting:\n", err)
+		os.Exit(1)
+	}
 
 	for resource := range resourceCollectionChan {
 		allResources = append(allResources, resource)

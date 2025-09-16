@@ -5,6 +5,7 @@ go 1.25.1
 require (
 	github.com/cloudflare/cloudflare-go/v3 v3.1.0
 	github.com/spf13/cobra v1.10.1
+	golang.org/x/sync v0.17.0
 )
 
 require (
