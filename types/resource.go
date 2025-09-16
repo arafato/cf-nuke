@@ -10,8 +10,19 @@ type Resource struct {
 	ResourceID   string
 	ResourceName string
 	ProductName  string
+	State        ResourceState
 }
 
 type ResourceCollector func(*Credentials) (Resources, error)
 
 type Resources []*Resource
+
+type ResourceState int
+
+const (
+	ResourceStatePending = iota
+	ResourceStateReady
+	ResourceStateDeleted
+	ResourceStateFailed
+	ResourceStateFiltered
+)
