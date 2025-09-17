@@ -1,0 +1,9 @@
+resource-types:
+  excludes:
+    - SecretsStore
+    - WorkersScripts
+    - KV
+    - AIGateway
+    - D1
+    - R2
+    - Queue
