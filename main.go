@@ -130,10 +130,6 @@ func executeNuke() {
 	}
 }
 
-func loadConfig(configPath string) {
-
-}
-
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
