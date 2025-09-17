@@ -5,10 +5,10 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/ai_gateway"
-	"github.com/cloudflare/cloudflare-go/v6/option"
 
 	"github.com/arafato/cf-nuke/infrastructure"
 	"github.com/arafato/cf-nuke/types"
+	"github.com/arafato/cf-nuke/utils"
 )
 
 func init() {
@@ -20,9 +20,7 @@ type AIGateway struct {
 }
 
 func CollectAIGateway(creds *types.Credentials) (types.Resources, error) {
-	client := cloudflare.NewClient(
-		option.WithAPIToken(creds.APIKey),
-	)
+	client := utils.CreateCFClient(creds)
 
 	page, err := client.AIGateway.List(context.TODO(), ai_gateway.AIGatewayListParams{
 		AccountID: cloudflare.F(creds.AccountID),

@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/r2"
 
 	"github.com/arafato/cf-nuke/infrastructure"
 	"github.com/arafato/cf-nuke/types"
+	"github.com/arafato/cf-nuke/utils"
 )
 
 func init() {
@@ -20,9 +20,7 @@ type R2 struct {
 }
 
 func CollectR2(creds *types.Credentials) (types.Resources, error) {
-	client := cloudflare.NewClient(
-		option.WithAPIToken(creds.APIKey),
-	)
+	client := utils.CreateCFClient(creds)
 
 	resp, err := client.R2.Buckets.List(context.TODO(), r2.BucketListParams{
 		AccountID: cloudflare.F(creds.AccountID),

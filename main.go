@@ -21,6 +21,8 @@ var (
 	configFile string
 	key        string
 	accountId  string
+	user       string
+	mode       string
 	noDryRun   bool
 )
 
@@ -35,23 +37,37 @@ var nukeCmd = &cobra.Command{
 	Short: "Execute nuke operation",
 	Long: `Nuke command performs destructive operations based on the provided configuration.
 Use with caution and review the dry-run output before executing.`,
+
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		mode, _ := cmd.Flags().GetString("mode")
+		if mode != "token" && mode != "account" {
+			return fmt.Errorf("invalid mode '%s', must be 'token' or 'account'", mode)
+		}
+
+		if mode == "account" {
+			user, _ := cmd.Flags().GetString("user")
+			if user == "" {
+				return fmt.Errorf("--user flag is required when --mode is 'account'")
+			}
+		}
+
+		return nil
+	},
 	Run: func(cmd *cobra.Command, args []string) {
-		// This is where you'll add your custom logic
 		executeNuke()
 	},
 }
 
 func init() {
-	// Add the nuke command to root
 	rootCmd.AddCommand(nukeCmd)
 
-	// Define flags for the nuke command
+	nukeCmd.Flags().StringVarP(&mode, "mode", "m", "", "The mode of operation ('token' or 'account')")
 	nukeCmd.Flags().StringVarP(&configFile, "config", "c", "", "Path to configuration file (required)")
 	nukeCmd.Flags().StringVarP(&key, "key", "k", "", "Key for operation (required)")
 	nukeCmd.Flags().StringVarP(&accountId, "account-id", "a", "", "Cloudflare account id (required)")
 	nukeCmd.Flags().BoolVar(&noDryRun, "no-dry-run", false, "Execute without dry run")
+	nukeCmd.Flags().StringVarP(&user, "user", "u", "", "The user identifier (required only for 'account' mode)")
 
-	// Make config and key required
 	nukeCmd.MarkFlagRequired("config")
 	nukeCmd.MarkFlagRequired("account-id")
 	nukeCmd.MarkFlagRequired("key")
@@ -72,6 +88,8 @@ func executeNuke() {
 	resources := infrastructure.ProcessCollection(&types.Credentials{
 		AccountID: accountId,
 		APIKey:    key,
+		User:      user,
+		Mode:      mode,
 	})
 
 	infrastructure.FilterCollection(resources, config)

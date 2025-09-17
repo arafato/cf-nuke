@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/cloudflare/cloudflare-go/v6"
-	"github.com/cloudflare/cloudflare-go/v6/option"
 	"github.com/cloudflare/cloudflare-go/v6/secrets_store"
 
 	"github.com/arafato/cf-nuke/infrastructure"
 	"github.com/arafato/cf-nuke/types"
+	"github.com/arafato/cf-nuke/utils"
 )
 
 func init() {
@@ -20,9 +20,7 @@ type SecretsStore struct {
 }
 
 func CollectSecretsStore(creds *types.Credentials) (types.Resources, error) {
-	client := cloudflare.NewClient(
-		option.WithAPIToken(creds.APIKey),
-	)
+	client := utils.CreateCFClient(creds)
 
 	page, err := client.SecretsStore.Stores.List(context.TODO(), secrets_store.StoreListParams{
 		AccountID: cloudflare.F(creds.AccountID),

@@ -5,10 +5,10 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/d1"
-	"github.com/cloudflare/cloudflare-go/v6/option"
 
 	"github.com/arafato/cf-nuke/infrastructure"
 	"github.com/arafato/cf-nuke/types"
+	"github.com/arafato/cf-nuke/utils"
 )
 
 func init() {
@@ -20,9 +20,7 @@ type D1 struct {
 }
 
 func CollectD1(creds *types.Credentials) (types.Resources, error) {
-	client := cloudflare.NewClient(
-		option.WithAPIToken(creds.APIKey),
-	)
+	client := utils.CreateCFClient(creds)
 
 	page, err := client.D1.Database.List(context.TODO(), d1.DatabaseListParams{
 		AccountID: cloudflare.F(creds.AccountID),
