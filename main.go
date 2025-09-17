@@ -7,6 +7,7 @@ import (
 	"os"
 	"sync"
 
+	"github.com/arafato/cf-nuke/config"
 	_ "github.com/arafato/cf-nuke/resources"
 	"github.com/arafato/cf-nuke/utils"
 
@@ -51,7 +52,7 @@ func init() {
 	nukeCmd.Flags().BoolVar(&noDryRun, "no-dry-run", false, "Execute without dry run")
 
 	// Make config and key required
-	// nukeCmd.MarkFlagRequired("config")
+	nukeCmd.MarkFlagRequired("config")
 	nukeCmd.MarkFlagRequired("account-id")
 	nukeCmd.MarkFlagRequired("key")
 }
@@ -62,22 +63,20 @@ func executeNuke() {
 	fmt.Printf("  Account ID: %s\n", accountId)
 	fmt.Printf("  No dry run: %t\n", noDryRun)
 
-	// PLACEHOLDER: Load and parse configuration file
-	/*
-		config, err := loadConfig(configFile)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error loading config: %v\n", err)
-			os.Exit(1)
-		}
-		_ = config // Use the config in your logic
-	*/
+	config, err := config.LoadConfig(configFile)
+	if err != nil {
+		log.Fatalf("Error loading configuration: %v", err)
+		os.Exit(1)
+	}
 
 	resources := infrastructure.ProcessCollection(&types.Credentials{
 		AccountID: accountId,
 		APIKey:    key,
 	})
 
-	fmt.Printf("Scan complete: Found %d removable resources in account %s:\n", resources.NumOf(types.Ready), accountId)
+	infrastructure.FilterCollection(resources, config)
+
+	fmt.Printf("Scan complete: Found %d resources in total in account %s: To be removed %d, Filtered %d\n", len(resources), accountId, resources.NumOf(types.Ready), resources.NumOf(types.Filtered))
 	utils.PrettyPrintStatus(resources)
 
 	if !noDryRun {

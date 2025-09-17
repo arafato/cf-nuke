@@ -12,6 +12,9 @@ func RemoveCollection(ctx context.Context, resources types.Resources) error {
 
 	for _, resource := range resources {
 		resource := resource
+		if resource.State == types.Filtered {
+			continue
+		}
 		g.Go(func() error {
 			return resource.Remove()
 		})
