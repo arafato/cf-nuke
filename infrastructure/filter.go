@@ -32,6 +32,10 @@ func FilterCollection(resources types.Resources, config *config.Config) {
 				resource.State = types.Filtered
 				continue
 			}
+			if _, ok := idSet[resource.ResourceName]; ok {
+				resource.State = types.Filtered
+				continue
+			}
 		}
 		resource.State = types.Ready
 	}
