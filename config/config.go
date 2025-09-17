@@ -1,0 +1,29 @@
+package config
+
+import (
+	"fmt"
+	"os"
+
+	"gopkg.in/yaml.v2"
+)
+
+type Config struct {
+	ResourceTypes struct {
+		Excludes []string `yaml:"excludes"`
+	} `yaml:"resource-types"`
+}
+
+func LoadConfig(path string) (*Config, error) {
+	yamlFile, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("error reading config: %w", err)
+	}
+
+	var config Config
+	err = yaml.Unmarshal(yamlFile, &config)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshaling YAML: %w", err)
+	}
+
+	return &config, nil
+}
