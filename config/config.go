@@ -11,6 +11,15 @@ type Config struct {
 	ResourceTypes struct {
 		Excludes []string `yaml:"excludes"`
 	} `yaml:"resource-types"`
+
+	ResourceIDs struct {
+		Excludes []ResourceIDFilter `yaml:"excludes"`
+	} `yaml:"resource-ids"`
+}
+
+type ResourceIDFilter struct {
+	ResourceType string `yaml:"resourceType"`
+	ID           string `yaml:"id"`
 }
 
 func LoadConfig(path string) (*Config, error) {

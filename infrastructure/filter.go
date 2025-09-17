@@ -6,15 +6,32 @@ import (
 )
 
 func FilterCollection(resources types.Resources, config *config.Config) {
-	resourceFilter := config.ResourceTypes.Excludes
-	filterSet := make(map[string]struct{}, len(resourceFilter))
-	for _, filter := range resourceFilter {
-		filterSet[filter] = struct{}{}
+	resourceTypeFilter := config.ResourceTypes.Excludes
+	resourceTypeFilterSet := make(map[string]struct{}, len(resourceTypeFilter))
+	for _, filter := range resourceTypeFilter {
+		resourceTypeFilterSet[filter] = struct{}{}
 	}
+
+	resourceIDFilters := config.ResourceIDs.Excludes
+	resourceIDLookup := make(map[string]map[string]struct{})
+	for _, resourceIDFilter := range resourceIDFilters {
+		if _, ok := resourceIDLookup[resourceIDFilter.ResourceType]; !ok {
+			resourceIDLookup[resourceIDFilter.ResourceType] = make(map[string]struct{})
+		}
+		resourceIDLookup[resourceIDFilter.ResourceType][resourceIDFilter.ID] = struct{}{}
+	}
+
 	for _, resource := range resources {
-		if _, ok := filterSet[resource.ProductName]; ok {
+		if _, ok := resourceTypeFilterSet[resource.ProductName]; ok {
 			resource.State = types.Filtered
 			continue
+		}
+
+		if idSet, ok := resourceIDLookup[resource.ProductName]; ok {
+			if _, ok := idSet[resource.ResourceID]; ok {
+				resource.State = types.Filtered
+				continue
+			}
 		}
 		resource.State = types.Ready
 	}

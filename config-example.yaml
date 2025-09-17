@@ -7,3 +7,12 @@ resource-types:
     - D1
     - R2
     - Queue
+
+resource-ids:
+  excludes:
+    - resourceType: KV
+      id: 609a604e17d24ad0a1bda78cdcf35733
+    - resourceType: KV
+      id: idef45a748fad047b1b985d7bf29b5d8f3
+    - resourceType: D1
+      id: 16d30729-f27e-474a-885c-5d285804a7ac
