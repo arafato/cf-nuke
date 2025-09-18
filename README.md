@@ -1,9 +1,36 @@
 # cf-nuke
-Removes all resources from a Cloudflare account.
 
+`cf-nuke` is a command-line tool for removing all resources from a Cloudflare account. Use it with caution, as it cannot distinguish between production and non-production resources.
+
+## Usage
+
+cf-nuke nuke [flags]
+
+Flags:
+  -a, --account-id string   Cloudflare account id (required)
+  -c, --config string       Path to configuration file (required)
+  -h, --help                help for nuke
+  -k, --key string          Key for operation (required)
+  -m, --mode string         The mode of operation ('token' or 'account')
+      --no-dry-run          Execute without dry run
+  -u, --user string         The user identifier (required only for 'account' mode)
+
+The primary command is `nuke`, which performs the destructive operations.
+
+#### Account Mode (using an Account Global Token)
 ```bash
-$ ./cf-nuke nuke --mode account -a 4e6... -k d2c... -u a***@***.com -c config.yaml --no-dry-run```
+$ ./cf-nuke nuke --mode account -k <your-api-token> -u <your-email> -c config.yaml --no-dry-run
 ```
+
+#### Token Mode (using an API Token)
+```bash
+cf-nuke nuke -c config.yaml -a <your-account-id> -k <your-api-token>
+```
+
+### Dry Run
+
+By default, `cf-nuke` runs in dry-run mode. It will list all the resources it has found and which of them will be removed based on the configuration.
+
 ```
 ┌──────────────┬─────────────┬──────────┐
 │   PRODUCT    │  ID / NAME  │  STATUS  │
@@ -14,14 +41,21 @@ $ ./cf-nuke nuke --mode account -a 4e6... -k d2c... -u a***@***.com -c config.ya
 └──────────────┴─────────────┴──────────┘
 
 Status: 3 resources in total. Removed 0, In-Progress 0, Filtered 1
+```
+
+To execute the removal of resources, you must use the `--no-dry-run` flag.
+
+### Executing the Nuke
+
+When you run with `--no-dry-run`, you will be prompted for a final confirmation before the deletion begins.
+
+```bash
 Executing actual nuke operation... do you really want to continue (yes/no)?
 ```
-> **Development Status** *cf-nuke* is not stable and currently under heavy development. It is also likely that not all Cloudflare
-resources are covered by it. Be encouraged to add missing resources and create
-a Pull Request or to create an [Issue](https://github.com/arafato/cf-nuke/issues/new).
 
 ## Configuration
-cf-nuke lets you configure two different kinds of filters.
+
+`cf-nuke` lets you configure two different kinds of filters.
 - Resource-Type filters that filter all instances of a particular resource type (e.g. all KV instances).
 - Resource-ID filters that filter one particular resource instance based on its ID or name.
 
