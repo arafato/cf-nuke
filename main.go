@@ -104,17 +104,17 @@ func executeNuke() {
 			return
 		}
 		fmt.Println("Nuke operation confirmed.")
-		utils.PrettyPrintStatus(resources)
 
 		var wg sync.WaitGroup
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		wg.Add(1)
-
 		if err := infrastructure.RemoveCollection(ctx, resources); err != nil {
 			log.Printf("Error removing resources: %v", err)
 		}
+
+		wg.Add(1)
+		go utils.PrintStatusWithContext(&wg, ctx, resources)
 
 		cancel()
 		// Waiting for everything to finish, in this case the status printer
