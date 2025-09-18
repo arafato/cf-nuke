@@ -74,11 +74,6 @@ func init() {
 }
 
 func executeNuke() {
-	fmt.Printf("Executing nuke command with:\n")
-	fmt.Printf("  Config file: %s\n", configFile)
-	fmt.Printf("  Account ID: %s\n", accountId)
-	fmt.Printf("  No dry run: %t\n", noDryRun)
-
 	config, err := config.LoadConfig(configFile)
 	if err != nil {
 		log.Fatalf("Error loading configuration: %v", err)
@@ -116,7 +111,6 @@ func executeNuke() {
 		defer cancel()
 
 		wg.Add(1)
-		go utils.PrintStatusWithContext(&wg, ctx, resources)
 
 		if err := infrastructure.RemoveCollection(ctx, resources); err != nil {
 			log.Printf("Error removing resources: %v", err)
