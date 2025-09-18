@@ -10,11 +10,10 @@ Removes all resources from a Cloudflare account.
 │ KV           │ testkv1     │ Ready    │
 │ AccountToken │ donotdelete │ Filtered │
 └──────────────┴─────────────┴──────────┘
-```
 
 Status: 3 resources in total. Removed 0, In-Progress 0, Filtered 1
 Executing actual nuke operation... do you really want to continue (yes/no)?
-
+```
 > **Development Status** *cf-nuke* is not stable and currently under heavy development. It is also likely that not all Cloudflare
 resources are covered by it. Be encouraged to add missing resources and create
 a Pull Request or to create an [Issue](https://github.com/arafato/cf-nuke/issues/new).
