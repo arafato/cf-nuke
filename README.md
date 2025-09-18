@@ -1,7 +1,8 @@
 # cf-nuke
 Removes all resources from a Cloudflare account.
 
-$ ./cf-nuke nuke --mode account -a 4e6... -k d2c... -u a***@***.com -c config.yaml --no-dry-run
+``` $ ./cf-nuke nuke --mode account -a 4e6... -k d2c... -u a***@***.com -c config.yaml --no-dry-run```
+```
 ┌──────────────┬─────────────┬──────────┐
 │   PRODUCT    │  ID / NAME  │  STATUS  │
 ├──────────────┼─────────────┼──────────┤
@@ -9,6 +10,7 @@ $ ./cf-nuke nuke --mode account -a 4e6... -k d2c... -u a***@***.com -c config.ya
 │ KV           │ testkv1     │ Ready    │
 │ AccountToken │ donotdelete │ Filtered │
 └──────────────┴─────────────┴──────────┘
+```
 
 Status: 3 resources in total. Removed 0, In-Progress 0, Filtered 1
 Executing actual nuke operation... do you really want to continue (yes/no)?
