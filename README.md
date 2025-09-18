@@ -4,7 +4,8 @@
 
 ## Usage
 
-cf-nuke nuke [flags]
+```bash
+$ cf-nuke nuke [flags]
 
 Flags:
   -a, --account-id string   Cloudflare account id (required)
@@ -14,6 +15,7 @@ Flags:
   -m, --mode string         The mode of operation ('token' or 'account')
       --no-dry-run          Execute without dry run
   -u, --user string         The user identifier (required only for 'account' mode)
+```
 
 The primary command is `nuke`, which performs the destructive operations.
 
