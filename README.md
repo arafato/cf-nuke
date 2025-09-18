@@ -1,7 +1,7 @@
 # cf-nuke
 Removes all resources from a Cloudflare account.
 
-```bash
+```
 $ ./cf-nuke nuke --mode account -a 4e6... -k d2c... -u a***@***.com -c config.yaml --no-dry-run```
 ```
 ┌──────────────┬─────────────┬──────────┐
@@ -24,7 +24,7 @@ cf-nuke lets you configure two different kinds of filters.
 - Resource-Type filters that filter all instances of a particular resource type (e.g. all KV instances).
 - Resource-ID filters that filter one particular resource instance based on its ID or name.
 
-```yaml
+```
 resource-types:
   excludes:
     - SecretsStore
