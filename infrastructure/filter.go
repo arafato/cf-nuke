@@ -8,7 +8,6 @@ import (
 )
 
 func FilterCollection(resources types.Resources, config *config.Config) {
-
 	resourceTypeFilter := config.ResourceTypes.Excludes
 	resourceTypeFilterSet := make(map[string]struct{}, len(resourceTypeFilter))
 	for _, filter := range resourceTypeFilter {
