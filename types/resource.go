@@ -9,7 +9,8 @@ import (
 )
 
 type Removable interface {
-	Remove(accountID string, resourceID string) error
+	// Some resources require the ID others the name for a delete operation
+	Remove(accountID string, resourceID string, resourceName string) error
 }
 
 type Resource struct {
@@ -39,7 +40,7 @@ const (
 func (r *Resource) Remove() error {
 	operation := func() (struct{}, error) {
 		r.State = Removing
-		err := r.Removable.Remove(r.AccountID, r.ResourceID)
+		err := r.Removable.Remove(r.AccountID, r.ResourceID, r.ResourceName)
 		if err != nil {
 			if strings.Contains(err.Error(), "401 Unauthorized") {
 				return struct{}{}, backoff.Permanent(errors.New("Unauthorized Request"))

@@ -54,7 +54,7 @@ func CollectAccountToken(creds *types.Credentials) (types.Resources, error) {
 	return allResources, nil
 }
 
-func (c AccountToken) Remove(accountID string, resourceID string) error {
+func (c AccountToken) Remove(accountID string, resourceID string, resourceName string) error {
 	_, err := c.Client.Tokens.Delete(context.TODO(), resourceID, accounts.TokenDeleteParams{
 		AccountID: cloudflare.F(accountID)})
 

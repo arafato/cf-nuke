@@ -46,7 +46,7 @@ func CollectR2(creds *types.Credentials) (types.Resources, error) {
 	return allResources, nil
 }
 
-func (c R2) Remove(accountID string, resourceID string) error {
+func (c R2) Remove(accountID string, resourceID string, resourceName string) error {
 	_, err := c.Client.Buckets.Delete(context.TODO(), resourceID, r2.BucketDeleteParams{
 		AccountID: cloudflare.F(accountID)})
 

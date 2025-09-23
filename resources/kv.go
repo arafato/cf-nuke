@@ -53,7 +53,7 @@ func CollectKV(creds *types.Credentials) (types.Resources, error) {
 	return allResources, nil
 }
 
-func (c KV) Remove(accountID string, resourceID string) error {
+func (c KV) Remove(accountID string, resourceID string, resourceName string) error {
 	_, err := c.Client.Namespaces.Delete(context.TODO(), resourceID, kv.NamespaceDeleteParams{
 		AccountID: cloudflare.F(accountID)})
 

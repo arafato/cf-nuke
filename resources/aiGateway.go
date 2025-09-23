@@ -53,7 +53,7 @@ func CollectAIGateway(creds *types.Credentials) (types.Resources, error) {
 	return allResources, nil
 }
 
-func (c AIGateway) Remove(accountID string, resourceID string) error {
+func (c AIGateway) Remove(accountID string, resourceID string, resourceName string) error {
 	_, err := c.Client.Delete(context.TODO(), resourceID, ai_gateway.AIGatewayDeleteParams{
 		AccountID: cloudflare.F(accountID)})
 

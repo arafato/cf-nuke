@@ -54,7 +54,7 @@ func CollectQueues(creds *types.Credentials) (types.Resources, error) {
 	return allResources, nil
 }
 
-func (q Queue) Remove(accountID string, resourceID string) error {
+func (q Queue) Remove(accountID string, resourceID string, resourceName string) error {
 	_, err := q.Client.Delete(context.TODO(), resourceID, queues.QueueDeleteParams{
 		AccountID: cloudflare.F(accountID),
 	})

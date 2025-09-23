@@ -53,7 +53,7 @@ func CollectSecretsStore(creds *types.Credentials) (types.Resources, error) {
 	return allResources, nil
 }
 
-func (c SecretsStore) Remove(accountID string, resourceID string) error {
+func (c SecretsStore) Remove(accountID string, resourceID string, resourceName string) error {
 	_, err := c.Client.Stores.Delete(context.TODO(), resourceID, secrets_store.StoreDeleteParams{
 		AccountID: cloudflare.F(accountID)})
 

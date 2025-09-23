@@ -53,7 +53,7 @@ func CollectD1(creds *types.Credentials) (types.Resources, error) {
 	return allResources, nil
 }
 
-func (c D1) Remove(accountID string, resourceID string) error {
+func (c D1) Remove(accountID string, resourceID string, resourceName string) error {
 	_, err := c.Client.Database.Delete(context.TODO(), resourceID, d1.DatabaseDeleteParams{
 		AccountID: cloudflare.F(accountID)})
 
