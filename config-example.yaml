@@ -1,3 +1,4 @@
+# Zones using Cloudflare Registrar can't be deleted
 zones:
   excludes:
     - mydomain.com
