@@ -45,5 +45,5 @@ func PrettyPrintStatus(resources types.Resources) {
 			fmt.Printf("%s - \033[32m%s\033[0m - %s - %s\n", resource.ProductName, resource.ResourceName, resource.ResourceID, resource.State)
 		}
 	*/
-	fmt.Printf("\nStatus: %d resources in total. Removed %d, In-Progress %d, Filtered %d\n", len(resources), resources.NumOf(types.Deleted), resources.NumOf(types.Removing), resources.NumOf(types.Filtered))
+	fmt.Printf("\nStatus: %d resources in total. Removed %d, In-Progress %d, Filtered %d, Failed %d\n", len(resources), resources.NumOf(types.Deleted), resources.NumOf(types.Removing), resources.NumOf(types.Filtered), resources.NumOf(types.Failed))
 }
