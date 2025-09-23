@@ -14,16 +14,15 @@ var collectors = make(map[string]types.ResourceCollector)
 
 var resourceCollectionChan = make(chan *types.Resource, 100)
 
-func RegisterCollector(name string, collector types.ResourceCollector) error {
+func RegisterCollector(name string, collector types.ResourceCollector) {
 	var mu = sync.Mutex{}
 	mu.Lock()
 	defer mu.Unlock()
 
 	if _, exists := collectors[name]; exists {
-		return fmt.Errorf("handler %s already registered", name)
+		panic(fmt.Errorf("handler %s already registered", name))
 	}
 	collectors[name] = collector
-	return nil
 }
 
 func ProcessCollection(creds *types.Credentials) types.Resources {
