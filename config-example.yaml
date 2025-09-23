@@ -13,6 +13,7 @@ resource-types:
     - R2
     - Queue
     - AccountToken
+    - Workflow
 
 resource-ids:
   excludes:
