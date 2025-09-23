@@ -1,7 +1,11 @@
+zones:
+  excludes:
+    - mydomain.com
+
 resource-types:
   excludes:
     - SecretsStore
-    - WorkersScripts
+    - Workersscripts
     - KV
     - AIGateway
     - D1

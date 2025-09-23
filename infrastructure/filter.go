@@ -1,11 +1,14 @@
 package infrastructure
 
 import (
+	"slices"
+
 	"github.com/arafato/cf-nuke/config"
 	"github.com/arafato/cf-nuke/types"
 )
 
 func FilterCollection(resources types.Resources, config *config.Config) {
+
 	resourceTypeFilter := config.ResourceTypes.Excludes
 	resourceTypeFilterSet := make(map[string]struct{}, len(resourceTypeFilter))
 	for _, filter := range resourceTypeFilter {
@@ -37,6 +40,12 @@ func FilterCollection(resources types.Resources, config *config.Config) {
 				continue
 			}
 		}
+
+		if slices.Contains(config.Zones.Excludes, resource.ResourceName) {
+			resource.State = types.Filtered
+			continue
+		}
+
 		resource.State = types.Ready
 	}
 }

@@ -8,6 +8,10 @@ import (
 )
 
 type Config struct {
+	Zones struct {
+		Excludes []string `yaml:"excludes"`
+	} `yaml:"zones"`
+
 	ResourceTypes struct {
 		Excludes []string `yaml:"excludes"`
 	} `yaml:"resource-types"`
