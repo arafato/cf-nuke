@@ -24,6 +24,9 @@ func FilterCollection(resources types.Resources, config *config.Config) {
 	}
 
 	for _, resource := range resources {
+		if resource.State == types.Hidden {
+			continue
+		}
 		if _, ok := resourceTypeFilterSet[resource.ProductName]; ok {
 			resource.State = types.Filtered
 			continue

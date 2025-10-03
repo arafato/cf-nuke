@@ -40,13 +40,17 @@ func CollectAccountToken(creds *types.Credentials) (types.Resources, error) {
 
 	var allResources types.Resources
 	for _, token := range allTokens {
+		state := types.Ready
+		if token.Name == types.TemporaryR2TokenName {
+			state = types.Hidden
+		}
 		res := types.Resource{
 			Removable:    AccountToken{Client: client.Accounts},
 			ResourceID:   token.ID,
 			ResourceName: token.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "AccountToken",
-			State:        types.Ready,
+			State:        state,
 		}
 		allResources = append(allResources, &res)
 	}

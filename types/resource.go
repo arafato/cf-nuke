@@ -35,6 +35,7 @@ const (
 	Deleted
 	Failed
 	Filtered
+	Hidden
 )
 
 func (r *Resource) Remove() error {

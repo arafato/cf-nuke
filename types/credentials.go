@@ -4,5 +4,12 @@ type Credentials struct {
 	APIKey    string
 	AccountID string
 	User      string
-	Mode      string
+	Mode      Mode
 }
+
+type Mode string
+
+const (
+	Account Mode = "account"
+	Token   Mode = "token"
+)

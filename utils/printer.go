@@ -31,6 +31,9 @@ func PrintStatusWithContext(wg *sync.WaitGroup, ctx context.Context, resources t
 func PrettyPrintStatus(resources types.Resources) {
 	data := [][]string{{"Product", "ID/Name", "Status"}}
 	for _, resource := range resources {
+		if resource.State == types.Hidden {
+			continue
+		}
 		data = append(data, []string{resource.ProductName, resource.ResourceName, resource.State.String()})
 	}
 
@@ -39,11 +42,5 @@ func PrettyPrintStatus(resources types.Resources) {
 	table.Bulk(data[1:])
 	table.Render()
 
-	/*
-		fmt.Print("\n====================================\n")
-		for _, resource := range resources {
-			fmt.Printf("%s - \033[32m%s\033[0m - %s - %s\n", resource.ProductName, resource.ResourceName, resource.ResourceID, resource.State)
-		}
-	*/
 	fmt.Printf("\nStatus: %d resources in total. Removed %d, In-Progress %d, Filtered %d, Failed %d\n", len(resources), resources.NumOf(types.Deleted), resources.NumOf(types.Removing), resources.NumOf(types.Filtered), resources.NumOf(types.Failed))
 }

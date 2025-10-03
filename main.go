@@ -80,12 +80,13 @@ func executeNuke() {
 		os.Exit(1)
 	}
 
-	resources := infrastructure.ProcessCollection(&types.Credentials{
+	creds := &types.Credentials{
 		AccountID: accountId,
 		APIKey:    key,
 		User:      user,
-		Mode:      mode,
-	})
+		Mode:      types.Mode(mode), // this is safe due to pre-check in PreRunE
+	}
+	resources := infrastructure.ProcessCollection(creds)
 
 	infrastructure.FilterCollection(resources, config)
 
@@ -119,6 +120,11 @@ func executeNuke() {
 		cancel()
 		// Waiting for everything to finish, in this case the status printer
 		wg.Wait()
+
+		err := utils.DeleteTemporaryR2Token(creds, resources)
+		if err != nil {
+			fmt.Println("Failed to delete temporary account token for R2/S3 operations:", err)
+		}
 
 		fmt.Println("Process finished.")
 	}

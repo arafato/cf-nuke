@@ -13,11 +13,12 @@ func _() {
 	_ = x[Deleted-2]
 	_ = x[Failed-3]
 	_ = x[Filtered-4]
+	_ = x[Hidden-5]
 }
 
-const _ResourceState_name = "RemovingReadyDeletedFailedFiltered"
+const _ResourceState_name = "RemovingReadyDeletedFailedFilteredHidden"
 
-var _ResourceState_index = [...]uint8{0, 8, 13, 20, 26, 34}
+var _ResourceState_index = [...]uint8{0, 8, 13, 20, 26, 34, 40}
 
 func (i ResourceState) String() string {
 	if i < 0 || i >= ResourceState(len(_ResourceState_index)-1) {
