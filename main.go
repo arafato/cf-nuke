@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/arafato/cf-nuke/config"
 	_ "github.com/arafato/cf-nuke/resources"
@@ -86,8 +87,15 @@ func executeNuke() {
 		User:      user,
 		Mode:      types.Mode(mode), // this is safe due to pre-check in PreRunE
 	}
-	resources := infrastructure.ProcessCollection(creds)
 
+	creds.S3AccessKeyID, creds.S3AccessSecret, err = utils.CreateTemporaryR2Token(creds)
+	time.Sleep(3 * time.Second)
+	if err != nil {
+		log.Fatalf("Error creating temporary S3/R2 token: %v", err)
+		os.Exit(1)
+	}
+
+	resources := infrastructure.ProcessCollection(creds)
 	infrastructure.FilterCollection(resources, config)
 
 	fmt.Printf("Scan complete: Found %d resources in total in account %s: To be removed %d, Filtered %d\n", len(resources), accountId, resources.NumOf(types.Ready), resources.NumOf(types.Filtered))
@@ -101,6 +109,10 @@ func executeNuke() {
 		var confirm string
 		fmt.Scanln(&confirm)
 		if confirm != "yes" {
+			err := utils.DeleteTemporaryR2Token(creds, resources)
+			if err != nil {
+				fmt.Println("Failed to delete temporary account token for R2/S3 operations:", err)
+			}
 			fmt.Println("Nuke operation aborted.")
 			return
 		}
@@ -118,7 +130,6 @@ func executeNuke() {
 		go utils.PrintStatusWithContext(&wg, ctx, resources)
 
 		cancel()
-		// Waiting for everything to finish, in this case the status printer
 		wg.Wait()
 
 		err := utils.DeleteTemporaryR2Token(creds, resources)

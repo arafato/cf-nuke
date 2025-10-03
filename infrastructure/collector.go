@@ -56,6 +56,5 @@ func ProcessCollection(creds *types.Credentials) types.Resources {
 	for resource := range resourceCollectionChan {
 		allResources = append(allResources, resource)
 	}
-
 	return allResources
 }
