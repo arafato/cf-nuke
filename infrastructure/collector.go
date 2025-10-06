@@ -48,13 +48,14 @@ func ProcessCollection(creds *types.Credentials) types.Resources {
 		close(resourceCollectionChan)
 	}()
 
+	for resource := range resourceCollectionChan {
+		allResources = append(allResources, resource)
+	}
+
 	if err := g.Wait(); err != nil {
 		fmt.Println("Error during collection, aborting:\n", err)
 		os.Exit(1)
 	}
 
-	for resource := range resourceCollectionChan {
-		allResources = append(allResources, resource)
-	}
 	return allResources
 }
