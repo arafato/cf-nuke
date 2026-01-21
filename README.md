@@ -36,6 +36,7 @@ These resources are managed at the account level.
 
 | Resource Type | Config Name | Description |
 |---------------|-------------|-------------|
+| ZT Access Applications | `ZTAccessApplication` | Zero Trust Access applications (SaaS, self-hosted, etc.) |
 | Account Tokens | `AccountToken` | API tokens created for the account |
 | AI Gateway | `AIGateway` | AI Gateway configurations |
 | D1 Databases | `D1` | Serverless SQL databases |
