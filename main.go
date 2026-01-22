@@ -98,7 +98,8 @@ func executeNuke() {
 	resources := infrastructure.ProcessCollection(creds)
 	infrastructure.FilterCollection(resources, config)
 
-	fmt.Printf("Scan complete: Found %d resources in total in account %s: To be removed %d, Filtered %d\n", len(resources), accountId, resources.NumOf(types.Ready), resources.NumOf(types.Filtered))
+	visibleCount := resources.VisibleCount()
+	fmt.Printf("Scan complete: Found %d resources in total in account %s: To be removed %d, Filtered %d\n", visibleCount, accountId, resources.NumOf(types.Ready), resources.NumOf(types.Filtered))
 	utils.PrettyPrintStatus(resources)
 
 	if !noDryRun {

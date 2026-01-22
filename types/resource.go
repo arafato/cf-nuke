@@ -70,3 +70,7 @@ func (r Resources) NumOf(state ResourceState) int {
 	}
 	return count
 }
+
+func (r Resources) VisibleCount() int {
+	return len(r) - r.NumOf(Hidden)
+}

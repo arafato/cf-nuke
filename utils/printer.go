@@ -42,5 +42,6 @@ func PrettyPrintStatus(resources types.Resources) {
 	table.Bulk(data[1:])
 	table.Render()
 
-	fmt.Printf("\nStatus: %d resources in total. Removed %d, In-Progress %d, Filtered %d, Failed %d\n", len(resources), resources.NumOf(types.Deleted), resources.NumOf(types.Removing), resources.NumOf(types.Filtered), resources.NumOf(types.Failed))
+	visibleCount := resources.VisibleCount()
+	fmt.Printf("\nStatus: %d resources in total. Removed %d, In-Progress %d, Filtered %d, Failed %d\n", visibleCount, resources.NumOf(types.Deleted), resources.NumOf(types.Removing), resources.NumOf(types.Filtered), resources.NumOf(types.Failed))
 }
