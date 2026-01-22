@@ -9,28 +9,41 @@ import (
 	"time"
 
 	"github.com/arafato/cf-nuke/config"
-	_ "github.com/arafato/cf-nuke/resources"
-	"github.com/arafato/cf-nuke/utils"
-
 	"github.com/arafato/cf-nuke/infrastructure"
+	_ "github.com/arafato/cf-nuke/resources"
 	"github.com/arafato/cf-nuke/types"
+	"github.com/arafato/cf-nuke/utils"
+	"github.com/arafato/cf-nuke/version"
 	"github.com/spf13/cobra"
 )
 
 // Global flags that can be used across commands
 var (
-	configFile string
-	key        string
-	accountId  string
-	user       string
-	mode       string
-	noDryRun   bool
+	configFile   string
+	key          string
+	accountId    string
+	user         string
+	mode         string
+	noDryRun     bool
+	shortVersion bool
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "cf-nuke",
 	Short: "cf-nuke removes every resource from your cloudflare account",
 	Long:  `A tool which removes every resource from an cloudflare account.  Use it with caution, since it cannot distinguish between production and non-production.`,
+}
+
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Print the version of cf-nuke",
+	Run: func(cmd *cobra.Command, args []string) {
+		if shortVersion {
+			version.PrintShort(os.Stdout)
+		} else {
+			version.Print(os.Stdout)
+		}
+	},
 }
 
 var nukeCmd = &cobra.Command{
@@ -61,6 +74,9 @@ Use with caution and review the dry-run output before executing.`,
 
 func init() {
 	rootCmd.AddCommand(nukeCmd)
+	rootCmd.AddCommand(versionCmd)
+
+	versionCmd.Flags().BoolVar(&shortVersion, "short", false, "Print short version string")
 
 	nukeCmd.Flags().StringVarP(&mode, "mode", "m", "", "The mode of operation ('token' or 'account')")
 	nukeCmd.Flags().StringVarP(&configFile, "config", "c", "", "Path to configuration file (required)")
