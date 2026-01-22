@@ -50,7 +50,7 @@ func (r *Resource) SetState(s ResourceState) {
 	r.state.Store(int32(s))
 }
 
-func (r *Resource) Remove() error {
+func (r *Resource) Remove(ctx context.Context) error {
 	operation := func() (struct{}, error) {
 		r.SetState(Removing)
 		err := r.Removable.Remove(r.AccountID, r.ResourceID, r.ResourceName)
@@ -63,7 +63,7 @@ func (r *Resource) Remove() error {
 		return struct{}{}, nil
 	}
 
-	_, err := backoff.Retry(context.TODO(), operation, backoff.WithBackOff(backoff.NewExponentialBackOff()), backoff.WithMaxTries(3))
+	_, err := backoff.Retry(ctx, operation, backoff.WithBackOff(backoff.NewExponentialBackOff()), backoff.WithMaxTries(3))
 	if err != nil {
 		r.SetState(Failed)
 		return err

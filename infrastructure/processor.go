@@ -16,7 +16,7 @@ func RemoveCollection(ctx context.Context, resources types.Resources) error {
 			continue
 		}
 		g.Go(func() error {
-			return resource.Remove()
+			return resource.Remove(ctx)
 		})
 	}
 
