@@ -150,12 +150,12 @@ func executeNuke() {
 		cancel()
 		wg.Wait()
 
-		err := utils.DeleteTemporaryR2Token(creds, resources)
-		if err != nil {
-			fmt.Println("Failed to delete temporary account token for R2/S3 operations:", err)
-		}
-
 		fmt.Println("Process finished.")
+	}
+
+	err = utils.DeleteTemporaryR2Token(creds, resources)
+	if err != nil {
+		fmt.Println("Failed to delete temporary account token for R2/S3 operations:", err)
 	}
 }
 
