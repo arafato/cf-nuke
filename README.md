@@ -63,6 +63,26 @@ These resources are managed at the account level.
 | Workers Scripts | `WorkersScripts` | Worker scripts and their configurations |
 | Workflows | `Workflow` | Workflows definitions |
 
+### Security & Certificates (Account-Scoped)
+
+| Resource Type | Config Name | Description |
+|---------------|-------------|-------------|
+| MTLS Certificates | `MTLSCertificate` | Mutual TLS client certificates for API Shield |
+| Firewall Access Rules | `FirewallAccessRule` | IP-based access rules (allow/block/challenge) |
+
+### Zero Trust & Networking (Account-Scoped)
+
+| Resource Type | Config Name | Description |
+|---------------|-------------|-------------|
+| ZT Access Groups | `ZTAccessGroup` | Zero Trust Access policy groups |
+| ZT Service Tokens | `ZTServiceToken` | Zero Trust service-to-service authentication tokens |
+| ZT Bookmarks | `ZTBookmark` | Zero Trust application bookmarks |
+| Cloudflare Tunnels | `Tunnel` | Cloudflare Tunnel connections |
+| Virtual Networks | `VirtualNetwork` | Virtual networks for tunnel routing |
+| Tunnel Routes | `TunnelRoute` | Private network routes through tunnels |
+| Gateway Rules | `GatewayRule` | Zero Trust Gateway filtering rules |
+| DNS Firewall | `DNSFirewall` | DNS Firewall clusters |
+
 ### Zone-Scoped Resources
 
 These resources are associated with specific DNS zones.
@@ -78,6 +98,17 @@ These resources are associated with specific DNS zones.
 | Waiting Rooms | `WaitingRoom` | Virtual waiting room configurations |
 | Web3 Hostnames | `Web3Hostname` | Web3 gateway hostnames (IPFS, ENS) |
 | Zones | `Zone` | DNS zones (domains) |
+
+### Security & Certificates (Zone-Scoped)
+
+| Resource Type | Config Name | Description |
+|---------------|-------------|-------------|
+| Custom Certificates | `CustomCertificate` | Custom SSL/TLS certificates |
+| Origin CA Certificates | `OriginCACertificate` | Cloudflare-signed origin certificates |
+| Client Certificates | `ClientCertificate` | mTLS client certificates for API Shield |
+| Keyless SSL Certificates | `KeylessCertificate` | Keyless SSL configurations |
+| API Gateway Operations | `APIGatewayOperation` | API Gateway endpoint operations |
+| Page Shield Policies | `PageShieldPolicy` | Page Shield CSP policies |
 
 > **Note:** Use the **Config Name** values when specifying resource types in your `config.yaml` file for filtering (see [Configuration](#configuration)).
 
