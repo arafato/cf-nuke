@@ -104,14 +104,15 @@ func executeNuke() {
 		Mode:      types.Mode(mode), // this is safe due to pre-check in PreRunE
 	}
 
-	creds.S3AccessKeyID, creds.S3AccessSecret, err = utils.CreateTemporaryR2Token(creds)
-	time.Sleep(3 * time.Second)
-	if err != nil {
-		log.Fatalf("Error creating temporary S3/R2 token: %v", err)
-		os.Exit(1)
-	}
-
-	resources := infrastructure.ProcessCollection(creds)
+	resources := utils.SpinWhile("Scanning Cloudflare account...", func() types.Resources {
+		creds.S3AccessKeyID, creds.S3AccessSecret, err = utils.CreateTemporaryR2Token(creds)
+		time.Sleep(3 * time.Second)
+		if err != nil {
+			log.Fatalf("Error creating temporary S3/R2 token: %v", err)
+			os.Exit(1)
+		}
+		return infrastructure.ProcessCollection(creds)
+	})
 	utils.PrintWarnings()
 	infrastructure.FilterCollection(resources, config)
 
