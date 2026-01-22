@@ -53,7 +53,6 @@ func CollectStreamLiveInputs(creds *types.Credentials) (types.Resources, error) 
 			ResourceName: name,
 			AccountID:    creds.AccountID,
 			ProductName:  "StreamLiveInput",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

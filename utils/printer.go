@@ -31,10 +31,10 @@ func PrintStatusWithContext(wg *sync.WaitGroup, ctx context.Context, resources t
 func PrettyPrintStatus(resources types.Resources) {
 	data := [][]string{{"Product", "ID/Name", "Status"}}
 	for _, resource := range resources {
-		if resource.State == types.Hidden {
+		if resource.State() == types.Hidden {
 			continue
 		}
-		data = append(data, []string{resource.ProductName, resource.ResourceName, resource.State.String()})
+		data = append(data, []string{resource.ProductName, resource.ResourceName, resource.State().String()})
 	}
 
 	table := tablewriter.NewWriter(os.Stdout)

@@ -47,7 +47,6 @@ func CollectHyperdrive(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: cfg.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "Hyperdrive",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

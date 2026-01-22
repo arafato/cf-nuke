@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"strings"
+	"sync/atomic"
 
 	"github.com/cenkalti/backoff/v5"
 )
@@ -19,7 +20,7 @@ type Resource struct {
 	ResourceID   string
 	ResourceName string
 	ProductName  string
-	State        ResourceState
+	state        atomic.Int32 // use State() and SetState() for thread-safe access
 }
 
 type ResourceCollector func(*Credentials) (Resources, error)
@@ -27,20 +28,31 @@ type ResourceCollector func(*Credentials) (Resources, error)
 type Resources []*Resource
 
 //go:generate stringer -type=ResourceState
-type ResourceState int
+type ResourceState int32
 
 const (
-	Removing ResourceState = iota
-	Ready
+	// Ready is the default state (zero value) for new resources
+	Ready ResourceState = iota
+	Removing
 	Deleted
 	Failed
 	Filtered
 	Hidden
 )
 
+// State returns the current state of the resource (thread-safe)
+func (r *Resource) State() ResourceState {
+	return ResourceState(r.state.Load())
+}
+
+// SetState sets the state of the resource (thread-safe)
+func (r *Resource) SetState(s ResourceState) {
+	r.state.Store(int32(s))
+}
+
 func (r *Resource) Remove() error {
 	operation := func() (struct{}, error) {
-		r.State = Removing
+		r.SetState(Removing)
 		err := r.Removable.Remove(r.AccountID, r.ResourceID, r.ResourceName)
 		if err != nil {
 			if strings.Contains(err.Error(), "401 Unauthorized") {
@@ -53,18 +65,18 @@ func (r *Resource) Remove() error {
 
 	_, err := backoff.Retry(context.TODO(), operation, backoff.WithBackOff(backoff.NewExponentialBackOff()), backoff.WithMaxTries(3))
 	if err != nil {
-		r.State = Failed
+		r.SetState(Failed)
 		return err
 	}
 
-	r.State = Deleted
+	r.SetState(Deleted)
 	return nil
 }
 
 func (r Resources) NumOf(state ResourceState) int {
 	count := 0
 	for _, resource := range r {
-		if resource.State == state {
+		if resource.State() == state {
 			count++
 		}
 	}

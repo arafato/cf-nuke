@@ -47,7 +47,6 @@ func CollectVectorize(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: idx.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "Vectorize",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

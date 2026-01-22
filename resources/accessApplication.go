@@ -54,7 +54,6 @@ func CollectZTAccessApplications(creds *types.Credentials) (types.Resources, err
 			ResourceName: name,
 			AccountID:    creds.AccountID,
 			ProductName:  "ZTAccessApplication",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

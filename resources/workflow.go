@@ -45,7 +45,6 @@ func CollectWorkflows(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: wf.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "Workflow",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

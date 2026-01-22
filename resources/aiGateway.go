@@ -45,7 +45,6 @@ func CollectAIGateway(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: aigw.ID,
 			AccountID:    creds.AccountID,
 			ProductName:  "AIGateway",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

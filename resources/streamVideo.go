@@ -62,7 +62,6 @@ func CollectStreamVideos(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: name,
 			AccountID:    creds.AccountID,
 			ProductName:  "StreamVideo",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

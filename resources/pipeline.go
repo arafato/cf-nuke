@@ -38,7 +38,6 @@ func CollectPipelines(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: p.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "Pipeline",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

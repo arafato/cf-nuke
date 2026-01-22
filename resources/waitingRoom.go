@@ -69,7 +69,6 @@ func CollectWaitingRooms(creds *types.Credentials) (types.Resources, error) {
 				ResourceName: wr.Name,
 				AccountID:    creds.AccountID,
 				ProductName:  "WaitingRoom",
-				State:        types.Ready,
 			}
 			allResources = append(allResources, &res)
 		}

@@ -51,7 +51,6 @@ func CollectLoadBalancerMonitors(creds *types.Credentials) (types.Resources, err
 			ResourceName: name,
 			AccountID:    creds.AccountID,
 			ProductName:  "LoadBalancerMonitor",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

@@ -46,7 +46,6 @@ func CollectLoadBalancerPools(creds *types.Credentials) (types.Resources, error)
 			ResourceName: pool.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "LoadBalancerPool",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

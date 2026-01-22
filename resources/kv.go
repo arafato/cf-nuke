@@ -45,7 +45,6 @@ func CollectKV(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: kv.Title,
 			AccountID:    creds.AccountID,
 			ProductName:  "KV",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

@@ -45,7 +45,6 @@ func CollectQueues(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: queue.QueueName,
 			AccountID:    creds.AccountID,
 			ProductName:  "Queue",
-			State:        types.Ready,
 		}
 
 		allResources = append(allResources, &res)

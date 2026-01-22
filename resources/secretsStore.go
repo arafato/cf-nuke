@@ -45,7 +45,6 @@ func CollectSecretsStore(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: store.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "SecretsStore",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

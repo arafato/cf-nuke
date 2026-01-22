@@ -52,7 +52,6 @@ func CollectDispatchNamespaces(creds *types.Credentials) (types.Resources, error
 			ResourceName: ns.NamespaceName,
 			AccountID:    creds.AccountID,
 			ProductName:  "DispatchNamespace",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

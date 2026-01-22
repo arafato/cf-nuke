@@ -45,7 +45,6 @@ func CollectZones(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: zone.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "zone",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

@@ -45,7 +45,6 @@ func CollectWorkers(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: script.ID,
 			AccountID:    creds.AccountID,
 			ProductName:  "WorkersScript",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

@@ -40,19 +40,18 @@ func CollectAccountToken(creds *types.Credentials) (types.Resources, error) {
 
 	var allResources types.Resources
 	for _, token := range allTokens {
-		state := types.Ready
-		if token.Name == types.TemporaryR2TokenName {
-			state = types.Hidden
-		}
-		res := types.Resource{
+		res := &types.Resource{
 			Removable:    AccountToken{Client: client.Accounts},
 			ResourceID:   token.ID,
 			ResourceName: token.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "AccountToken",
-			State:        state,
 		}
-		allResources = append(allResources, &res)
+		// Hide the temporary R2 token created by cf-nuke
+		if token.Name == types.TemporaryR2TokenName {
+			res.SetState(types.Hidden)
+		}
+		allResources = append(allResources, res)
 	}
 
 	return allResources, nil

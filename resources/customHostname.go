@@ -69,7 +69,6 @@ func CollectCustomHostnames(creds *types.Credentials) (types.Resources, error) {
 				ResourceName: ch.Hostname,
 				AccountID:    creds.AccountID,
 				ProductName:  "CustomHostname",
-				State:        types.Ready,
 			}
 			allResources = append(allResources, &res)
 		}

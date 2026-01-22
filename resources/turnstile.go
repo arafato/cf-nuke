@@ -47,7 +47,6 @@ func CollectTurnstile(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: widget.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "Turnstile",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}

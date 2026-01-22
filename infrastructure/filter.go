@@ -24,30 +24,30 @@ func FilterCollection(resources types.Resources, config *config.Config) {
 	}
 
 	for _, resource := range resources {
-		if resource.State == types.Hidden {
+		if resource.State() == types.Hidden {
 			continue
 		}
 		if _, ok := resourceTypeFilterSet[resource.ProductName]; ok {
-			resource.State = types.Filtered
+			resource.SetState(types.Filtered)
 			continue
 		}
 
 		if idSet, ok := resourceIDLookup[resource.ProductName]; ok {
 			if _, ok := idSet[resource.ResourceID]; ok {
-				resource.State = types.Filtered
+				resource.SetState(types.Filtered)
 				continue
 			}
 			if _, ok := idSet[resource.ResourceName]; ok {
-				resource.State = types.Filtered
+				resource.SetState(types.Filtered)
 				continue
 			}
 		}
 
 		if slices.Contains(config.Zones.Excludes, resource.ResourceName) {
-			resource.State = types.Filtered
+			resource.SetState(types.Filtered)
 			continue
 		}
 
-		resource.State = types.Ready
+		resource.SetState(types.Ready)
 	}
 }

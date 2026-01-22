@@ -50,7 +50,6 @@ func CollectPagesProjects(creds *types.Credentials) (types.Resources, error) {
 				ResourceName: deployment.ProjectName,
 				AccountID:    creds.AccountID,
 				ProductName:  "PagesProject",
-				State:        types.Ready,
 			}
 			allResources = append(allResources, &res)
 		}

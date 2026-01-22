@@ -36,7 +36,6 @@ func CollectR2(creds *types.Credentials) (types.Resources, error) {
 			ResourceName: *b.Name,
 			AccountID:    creds.AccountID,
 			ProductName:  "R2",
-			State:        types.Ready,
 		}
 		allResources = append(allResources, &res)
 	}
