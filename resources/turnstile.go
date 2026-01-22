@@ -31,7 +31,7 @@ func CollectTurnstile(creds *types.Credentials) (types.Resources, error) {
 	}
 
 	var allWidgets []turnstile.WidgetListResponse
-	for len(page.Result) != 0 {
+	for page != nil && len(page.Result) != 0 {
 		allWidgets = append(allWidgets, page.Result...)
 		page, err = page.GetNextPage()
 		if err != nil {

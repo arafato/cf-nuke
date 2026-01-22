@@ -2,6 +2,7 @@ package resources
 
 import (
 	"context"
+	"strings"
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/stream"
@@ -27,11 +28,15 @@ func CollectStreamVideos(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
+		// Return empty list for permission/access errors (feature not enabled for account)
+		if strings.Contains(err.Error(), "403") || strings.Contains(err.Error(), "404") {
+			return nil, nil
+		}
 		return nil, err
 	}
 
 	var allVideos []stream.Video
-	for len(page.Result) != 0 {
+	for page != nil && len(page.Result) != 0 {
 		allVideos = append(allVideos, page.Result...)
 		page, err = page.GetNextPage()
 		if err != nil {

@@ -36,7 +36,7 @@ func CollectPagesProjects(creds *types.Credentials) (types.Resources, error) {
 	projectsSeen := make(map[string]bool)
 	var allResources types.Resources
 
-	for len(page.Result) != 0 {
+	for page != nil && len(page.Result) != 0 {
 		for _, deployment := range page.Result {
 			// Skip if we've already seen this project
 			if projectsSeen[deployment.ProjectName] {

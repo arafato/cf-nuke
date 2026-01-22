@@ -33,7 +33,7 @@ func CollectCustomHostnames(creds *types.Credentials) (types.Resources, error) {
 	}
 
 	var allZones []zones.Zone
-	for len(zonePage.Result) != 0 {
+	for zonePage != nil && len(zonePage.Result) != 0 {
 		allZones = append(allZones, zonePage.Result...)
 		zonePage, err = zonePage.GetNextPage()
 		if err != nil {
@@ -54,7 +54,7 @@ func CollectCustomHostnames(creds *types.Credentials) (types.Resources, error) {
 		}
 
 		var allCustomHostnames []custom_hostnames.CustomHostnameListResponse
-		for len(chPage.Result) != 0 {
+		for chPage != nil && len(chPage.Result) != 0 {
 			allCustomHostnames = append(allCustomHostnames, chPage.Result...)
 			chPage, err = chPage.GetNextPage()
 			if err != nil {

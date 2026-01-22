@@ -31,7 +31,7 @@ func CollectHyperdrive(creds *types.Credentials) (types.Resources, error) {
 	}
 
 	var allConfigs []hyperdrive.Hyperdrive
-	for len(page.Result) != 0 {
+	for page != nil && len(page.Result) != 0 {
 		allConfigs = append(allConfigs, page.Result...)
 		page, err = page.GetNextPage()
 		if err != nil {

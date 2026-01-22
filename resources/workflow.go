@@ -32,7 +32,7 @@ func CollectWorkflows(creds *types.Credentials) (types.Resources, error) {
 		return nil, err
 	}
 
-	for len(page.Result) != 0 {
+	for page != nil && len(page.Result) != 0 {
 		allWorkflows = append(allWorkflows, page.Result...)
 		page, err = page.GetNextPage()
 	}

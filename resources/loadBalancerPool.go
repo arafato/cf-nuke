@@ -30,7 +30,7 @@ func CollectLoadBalancerPools(creds *types.Credentials) (types.Resources, error)
 	}
 
 	var allPools []load_balancers.Pool
-	for len(poolPage.Result) != 0 {
+	for poolPage != nil && len(poolPage.Result) != 0 {
 		allPools = append(allPools, poolPage.Result...)
 		poolPage, err = poolPage.GetNextPage()
 		if err != nil {

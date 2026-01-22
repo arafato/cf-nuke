@@ -30,7 +30,7 @@ func CollectZTAccessApplications(creds *types.Credentials) (types.Resources, err
 	}
 
 	var allApps []zero_trust.AccessApplicationListResponse
-	for len(appPage.Result) != 0 {
+	for appPage != nil && len(appPage.Result) != 0 {
 		allApps = append(allApps, appPage.Result...)
 		appPage, err = appPage.GetNextPage()
 		if err != nil {

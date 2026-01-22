@@ -33,7 +33,7 @@ func CollectWaitingRooms(creds *types.Credentials) (types.Resources, error) {
 	}
 
 	var allZones []zones.Zone
-	for len(zonePage.Result) != 0 {
+	for zonePage != nil && len(zonePage.Result) != 0 {
 		allZones = append(allZones, zonePage.Result...)
 		zonePage, err = zonePage.GetNextPage()
 		if err != nil {
@@ -54,7 +54,7 @@ func CollectWaitingRooms(creds *types.Credentials) (types.Resources, error) {
 		}
 
 		var allWaitingRooms []waiting_rooms.WaitingRoom
-		for len(wrPage.Result) != 0 {
+		for wrPage != nil && len(wrPage.Result) != 0 {
 			allWaitingRooms = append(allWaitingRooms, wrPage.Result...)
 			wrPage, err = wrPage.GetNextPage()
 			if err != nil {

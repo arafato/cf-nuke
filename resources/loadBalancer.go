@@ -33,7 +33,7 @@ func CollectLoadBalancers(creds *types.Credentials) (types.Resources, error) {
 	}
 
 	var allZones []zones.Zone
-	for len(zonePage.Result) != 0 {
+	for zonePage != nil && len(zonePage.Result) != 0 {
 		allZones = append(allZones, zonePage.Result...)
 		zonePage, err = zonePage.GetNextPage()
 		if err != nil {
@@ -54,7 +54,7 @@ func CollectLoadBalancers(creds *types.Credentials) (types.Resources, error) {
 		}
 
 		var allLoadBalancers []load_balancers.LoadBalancer
-		for len(lbPage.Result) != 0 {
+		for lbPage != nil && len(lbPage.Result) != 0 {
 			allLoadBalancers = append(allLoadBalancers, lbPage.Result...)
 			lbPage, err = lbPage.GetNextPage()
 			if err != nil {

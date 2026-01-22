@@ -30,7 +30,7 @@ func CollectLoadBalancerMonitors(creds *types.Credentials) (types.Resources, err
 	}
 
 	var allMonitors []load_balancers.Monitor
-	for len(monitorPage.Result) != 0 {
+	for monitorPage != nil && len(monitorPage.Result) != 0 {
 		allMonitors = append(allMonitors, monitorPage.Result...)
 		monitorPage, err = monitorPage.GetNextPage()
 		if err != nil {

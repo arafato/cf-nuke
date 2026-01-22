@@ -31,7 +31,7 @@ func CollectVectorize(creds *types.Credentials) (types.Resources, error) {
 	}
 
 	var allIndexes []vectorize.CreateIndex
-	for len(page.Result) != 0 {
+	for page != nil && len(page.Result) != 0 {
 		allIndexes = append(allIndexes, page.Result...)
 		page, err = page.GetNextPage()
 		if err != nil {
