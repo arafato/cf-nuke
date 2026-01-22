@@ -11,6 +11,7 @@
 *   [Overview](#overview)
 *   [Supported Resources](#supported-resources)
 *   [Usage](#usage)
+    *   [List Command](#list-command)
     *   [Dry Run Mode](#dry-run-mode)
     *   [Actual Nuke Execution](#actual-nuke-execution)
     *   [Account Mode](#account-mode)
@@ -131,6 +132,31 @@ Flags:
   -u, --user string         User identifier (required only for 'account' mode)
 ```
 
+### List Command
+
+To see all supported resource types, use the `list` command:
+
+```bash
+$ cf-nuke list
+```
+
+This outputs an alphabetically sorted list of all resource collector names:
+
+```
+account-token
+ai-gateway
+api-gateway-operation
+calls-app
+calls-turn-key
+client-certificate
+custom-certificate
+custom-hostname
+d1
+...
+```
+
+This is useful for understanding what resources `cf-nuke` can manage and for reference when configuring exclusions.
+
 ### Dry Run Mode
 
 By default, `cf-nuke` operates in dry-run mode. This is a safety measure that lists all resources it identifies and indicates which would be deleted based on your configuration. **Always perform a dry run first.**
@@ -198,6 +224,18 @@ Upon running this command, you will be prompted:
 Executing actual nuke operation... do you really want to continue (yes/no)?
 ```
 You must type `yes` and press Enter to confirm the deletion. **There is no undo.**
+
+### Deletion Errors
+
+If any resources fail to delete during the nuke operation, `cf-nuke` will display a summary of failed resources with their error messages at the end:
+
+```
+[ERRORS] 2 resource(s) failed to delete:
+  - KV (my-namespace): resource is in use by a Worker
+  - CustomCertificate (example.com): certificate is currently active
+```
+
+This helps you identify resources that require manual intervention or have dependencies that need to be resolved first.
 
 ---
 
