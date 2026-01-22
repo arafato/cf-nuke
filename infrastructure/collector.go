@@ -37,8 +37,9 @@ func ProcessCollection(creds *types.Credentials) types.Resources {
 		})
 	}
 
+	var collectedErr error
 	go func() {
-		_ = g.Wait()
+		collectedErr = g.Wait()
 		close(resourceCollectionChan)
 	}()
 
@@ -46,8 +47,8 @@ func ProcessCollection(creds *types.Credentials) types.Resources {
 		allResources = append(allResources, resource)
 	}
 
-	if err := g.Wait(); err != nil {
-		fmt.Println("Error during collection, aborting:\n", err)
+	if collectedErr != nil {
+		fmt.Println("Error during collection, aborting:\n", collectedErr)
 		os.Exit(1)
 	}
 
