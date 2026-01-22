@@ -152,6 +152,9 @@ func executeNuke() {
 		cancel()
 		wg.Wait()
 
+		// Print any resources that failed to delete with their error messages
+		utils.PrintFailedResources(resources)
+
 		fmt.Println("Process finished.")
 	}
 

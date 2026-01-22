@@ -45,3 +45,23 @@ func PrettyPrintStatus(resources types.Resources) {
 	visibleCount := resources.VisibleCount()
 	fmt.Printf("\nStatus: %d resources in total. Removed %d, In-Progress %d, Filtered %d, Failed %d\n", visibleCount, resources.NumOf(types.Deleted), resources.NumOf(types.Removing), resources.NumOf(types.Filtered), resources.NumOf(types.Failed))
 }
+
+// PrintFailedResources outputs all resources that failed deletion along with their error messages
+func PrintFailedResources(resources types.Resources) {
+	failedCount := resources.NumOf(types.Failed)
+	if failedCount == 0 {
+		return
+	}
+
+	fmt.Printf("\n[ERRORS] %d resource(s) failed to delete:\n", failedCount)
+	for _, resource := range resources {
+		if resource.State() == types.Failed {
+			errMsg := resource.GetError()
+			if errMsg == "" {
+				errMsg = "unknown error"
+			}
+			fmt.Printf("  - %s (%s): %s\n", resource.ProductName, resource.ResourceName, errMsg)
+		}
+	}
+	fmt.Println()
+}

@@ -21,6 +21,7 @@ type Resource struct {
 	ResourceName string
 	ProductName  string
 	state        atomic.Int32 // use State() and SetState() for thread-safe access
+	Error        atomic.Value // stores error message string for failed resources
 }
 
 type ResourceCollector func(*Credentials) (Resources, error)
@@ -50,6 +51,21 @@ func (r *Resource) SetState(s ResourceState) {
 	r.state.Store(int32(s))
 }
 
+// SetError stores an error message for the resource (thread-safe)
+func (r *Resource) SetError(err error) {
+	if err != nil {
+		r.Error.Store(err.Error())
+	}
+}
+
+// GetError returns the error message for the resource (thread-safe)
+func (r *Resource) GetError() string {
+	if v := r.Error.Load(); v != nil {
+		return v.(string)
+	}
+	return ""
+}
+
 func (r *Resource) Remove(ctx context.Context) error {
 	operation := func() (struct{}, error) {
 		r.SetState(Removing)
@@ -66,6 +82,7 @@ func (r *Resource) Remove(ctx context.Context) error {
 	_, err := backoff.Retry(ctx, operation, backoff.WithBackOff(backoff.NewExponentialBackOff()), backoff.WithMaxTries(3))
 	if err != nil {
 		r.SetState(Failed)
+		r.SetError(err)
 		return err
 	}
 
