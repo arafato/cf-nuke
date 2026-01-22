@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"fmt"
 	"os"
+	"slices"
 
 	"golang.org/x/sync/errgroup"
 
@@ -16,6 +17,16 @@ func RegisterCollector(name string, collector types.ResourceCollector) {
 		panic(fmt.Errorf("handler %s already registered", name))
 	}
 	collectors[name] = collector
+}
+
+// ListCollector returns an alphabetically sorted list of registered collector names.
+func ListCollectors() []string {
+	var collectorNames []string
+	for name, _ := range collectors {
+		collectorNames = append(collectorNames, name)
+	}
+	slices.Sort(collectorNames)
+	return collectorNames
 }
 
 func ProcessCollection(creds *types.Credentials) types.Resources {

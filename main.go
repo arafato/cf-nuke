@@ -72,9 +72,22 @@ Use with caution and review the dry-run output before executing.`,
 	},
 }
 
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List all supported resource types",
+	Long:  "List all resources types that are currently supported by this version of cf-nuke.",
+	Run: func(cmd *cobra.Command, args []string) {
+		collectors := infrastructure.ListCollectors()
+		for _, name := range collectors {
+			fmt.Println(name)
+		}
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(nukeCmd)
 	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(listCmd)
 
 	versionCmd.Flags().BoolVar(&shortVersion, "short", false, "Print short version string")
 
