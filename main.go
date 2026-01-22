@@ -112,6 +112,7 @@ func executeNuke() {
 	}
 
 	resources := infrastructure.ProcessCollection(creds)
+	utils.PrintWarnings()
 	infrastructure.FilterCollection(resources, config)
 
 	visibleCount := resources.VisibleCount()
