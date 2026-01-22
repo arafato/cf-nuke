@@ -3,7 +3,6 @@ package infrastructure
 import (
 	"fmt"
 	"os"
-	"sync"
 
 	"golang.org/x/sync/errgroup"
 
@@ -12,13 +11,7 @@ import (
 
 var collectors = make(map[string]types.ResourceCollector)
 
-var resourceCollectionChan = make(chan *types.Resource, 100)
-
 func RegisterCollector(name string, collector types.ResourceCollector) {
-	var mu = sync.Mutex{}
-	mu.Lock()
-	defer mu.Unlock()
-
 	if _, exists := collectors[name]; exists {
 		panic(fmt.Errorf("handler %s already registered", name))
 	}
@@ -26,6 +19,7 @@ func RegisterCollector(name string, collector types.ResourceCollector) {
 }
 
 func ProcessCollection(creds *types.Credentials) types.Resources {
+	var resourceCollectionChan = make(chan *types.Resource, 100)
 	var allResources types.Resources
 	g := new(errgroup.Group)
 
