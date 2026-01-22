@@ -39,15 +39,21 @@ These resources are managed at the account level.
 | ZT Access Applications | `ZTAccessApplication` | Zero Trust Access applications (SaaS, self-hosted, etc.) |
 | Account Tokens | `AccountToken` | API tokens created for the account |
 | AI Gateway | `AIGateway` | AI Gateway configurations |
+| Calls SFU Apps | `CallsApp` | Cloudflare Calls SFU (video/audio) applications |
+| Calls TURN Keys | `CallsTurnKey` | Cloudflare Calls TURN server keys |
 | D1 Databases | `D1` | Serverless SQL databases |
 | Hyperdrive | `Hyperdrive` | Database connection pooling configurations |
+| Images | `Image` | Cloudflare Images stored in the account |
 | KV Namespaces | `KV` | Key-Value storage namespaces |
 | Load Balancer Monitors | `LoadBalancerMonitor` | Health check monitors for load balancers |
 | Load Balancer Pools | `LoadBalancerPool` | Origin server pools for load balancers |
+| Logpush Jobs | `LogpushJob` | Log delivery job configurations |
 | Pages Projects | `PagesProject` | Cloudflare Pages deployment projects |
 | Pipelines | `Pipeline` | Data pipelines (Pipelines product) |
 | Queues | `Queue` | Message queues |
 | R2 Buckets | `R2` | Object storage buckets |
+| Rulesets | `Ruleset` | Custom rulesets (excludes Cloudflare-managed) |
+| RUM Sites | `RUMSite` | Real User Monitoring (Web Analytics) sites |
 | Secrets Stores | `SecretsStore` | Secrets Store configurations |
 | Stream Live Inputs | `StreamLiveInput` | Live streaming input configurations |
 | Stream Videos | `StreamVideo` | Uploaded and encoded videos |
@@ -64,8 +70,13 @@ These resources are associated with specific DNS zones.
 | Resource Type | Config Name | Description |
 |---------------|-------------|-------------|
 | Custom Hostnames | `CustomHostname` | SSL for SaaS custom hostnames |
+| DNS Records | `DNSRecord` | DNS records (A, AAAA, CNAME, MX, TXT, etc.) |
+| Healthchecks | `Healthcheck` | Standalone health check configurations |
 | Load Balancers | `LoadBalancer` | Load balancer configurations |
+| Snippets | `Snippet` | Cloudflare Snippets (edge code snippets) |
+| Spectrum Apps | `SpectrumApp` | Spectrum TCP/UDP proxy applications |
 | Waiting Rooms | `WaitingRoom` | Virtual waiting room configurations |
+| Web3 Hostnames | `Web3Hostname` | Web3 gateway hostnames (IPFS, ENS) |
 | Zones | `Zone` | DNS zones (domains) |
 
 > **Note:** Use the **Config Name** values when specifying resource types in your `config.yaml` file for filtering (see [Configuration](#configuration)).
@@ -125,6 +136,19 @@ In this output:
 *   **Ready:** Resources that `cf-nuke` has identified and will attempt to delete (if `--no-dry-run` is used).
 *   **Filtered:** Resources that have been explicitly excluded by your configuration.
 
+### Permission Warnings
+
+If `cf-nuke` encounters permission errors while scanning certain resources or zones, it will continue scanning and display a summary of warnings after collection completes:
+
+```
+[WARNINGS] 3 issue(s) encountered during collection:
+  - DNSRecord (example.com): insufficient permissions
+  - SpectrumApp (test.io): insufficient permissions
+  - Image: insufficient permissions or feature not available
+```
+
+This ensures that missing permissions for specific resources or zones don't stop the entire operation. Resources that couldn't be scanned due to permissions will simply be skipped.
+
 ### Actual Nuke Execution
 
 To proceed with the deletion of resources, you must use the `--no-dry-run` flag. This will trigger a final confirmation prompt before any actions are taken.
@@ -152,17 +176,26 @@ You must type `yes` and press Enter to confirm the deletion. **There is no undo.
 
 ### Filter Types
 
-You can configure two types of filters:
+You can configure three types of filters:
 
 | Filter Type | Purpose |
 |-------------|---------|
+| `zones.excludes` | Exclude **entire DNS zones** (and their zone-scoped resources) by domain name |
 | `resource-types.excludes` | Exclude **all instances** of specific resource types |
-| `resource-ids.excludes` | Exclude **specific resources** by their ID |
+| `resource-ids.excludes` | Exclude **specific resources** by their ID or name |
 
 ### Example Configuration
 
 ```yaml
 # config.yaml
+
+# Exclude entire zones from deletion
+# This also protects all zone-scoped resources within these zones
+# Note: Zones using Cloudflare Registrar cannot be deleted
+zones:
+  excludes:
+    - mydomain.com        # Preserve this zone and all its resources
+    - production.io       # Preserve production domain
 
 # Exclude entire resource types from deletion
 resource-types:
@@ -174,7 +207,7 @@ resource-types:
     - R2                # Preserve all R2 buckets
     - KV                # Preserve all KV namespaces
 
-# Exclude specific resources by ID
+# Exclude specific resources by ID or name
 resource-ids:
   excludes:
     # Preserve a specific KV namespace
@@ -185,7 +218,7 @@ resource-ids:
     - resourceType: D1
       id: 16d30729-f27e-474a-885c-5d285804a7ac
 
-    # Preserve a specific Worker script
+    # Preserve a specific Worker script (by name)
     - resourceType: WorkersScripts
       id: my-production-worker
 
@@ -198,10 +231,11 @@ resource-ids:
 
 | Field | Type | Description |
 |-------|------|-------------|
+| `zones.excludes` | `string[]` | List of zone domain names to exclude from deletion |
 | `resource-types.excludes` | `string[]` | List of resource type names to exclude (see [Supported Resources](#supported-resources) for valid names) |
 | `resource-ids.excludes` | `object[]` | List of specific resources to exclude |
 | `resource-ids.excludes[].resourceType` | `string` | The resource type (must match a valid Config Name) |
-| `resource-ids.excludes[].id` | `string` | The unique identifier of the resource |
+| `resource-ids.excludes[].id` | `string` | The unique identifier or name of the resource |
 
 > **Tip:** Run `cf-nuke` in dry-run mode first (without `--no-dry-run`) to see all discovered resources and their IDs before configuring exclusions.
 
