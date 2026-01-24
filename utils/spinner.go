@@ -10,6 +10,7 @@ import (
 // Returns the result of the function and the duration it took
 func SpinWhile[T any](message string, fn func() T) (T, time.Duration) {
 	s := spinner.New(spinner.CharSets[35], 100*time.Millisecond)
+	s.Color("yellow") // Cloudflare orange (closest terminal color)
 	s.Suffix = " " + message
 	s.Start()
 	start := time.Now()
@@ -23,6 +24,7 @@ func SpinWhile[T any](message string, fn func() T) (T, time.Duration) {
 // Returns the result and error of the function
 func SpinWhileWithError[T any](message string, fn func() (T, error)) (T, error) {
 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+	s.Color("yellow") // Cloudflare orange (closest terminal color)
 	s.Suffix = " " + message
 	s.Start()
 	result, err := fn()
