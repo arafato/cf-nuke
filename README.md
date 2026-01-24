@@ -8,6 +8,7 @@
 
 ## Table of Contents
 
+*   [Installation](#installation)
 *   [Overview](#overview)
 *   [Supported Resources](#supported-resources)
 *   [Usage](#usage)
@@ -18,6 +19,44 @@
     *   [Token Mode](#token-mode)
 *   [Configuration](#configuration)
 *   [Important Considerations](#important-considerations)
+
+---
+
+## Installation
+
+### Homebrew (macOS and Linux)
+
+```bash
+brew tap arafato/tap
+brew install cf-nuke
+```
+
+Or install directly:
+
+```bash
+brew install arafato/tap/cf-nuke
+```
+
+### Download Binary
+
+Download the latest release for your platform from the [Releases page](https://github.com/arafato/cf-nuke/releases).
+
+Available binaries:
+- `cf-nuke_*_darwin_arm64.tar.gz` - macOS (Apple Silicon)
+- `cf-nuke_*_darwin_amd64.tar.gz` - macOS (Intel)
+- `cf-nuke_*_linux_arm64.tar.gz` - Linux (ARM64)
+- `cf-nuke_*_linux_amd64.tar.gz` - Linux (x86_64)
+- `cf-nuke_*_windows_amd64.zip` - Windows (x86_64)
+
+### Build from Source
+
+Requires Go 1.24 or later:
+
+```bash
+git clone https://github.com/arafato/cf-nuke.git
+cd cf-nuke
+go build -o cf-nuke .
+```
 
 ---
 
