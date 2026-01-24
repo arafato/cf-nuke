@@ -1,8 +1,21 @@
-# cf-nuke: Cloudflare Resource Deleter
+<p align="center">
+  <img src="https://img.shields.io/badge/cf--nuke-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="cf-nuke" />
+</p>
 
-`cf-nuke` is a powerful command-line tool designed to **delete all resources** from a Cloudflare account. **Use this tool with extreme caution**, as it is irreversible and cannot distinguish between production and non-production resources.
+<h1 align="center">cf-nuke</h1>
+<p align="center"><strong>Safely delete all resources from a Cloudflare account</strong></p>
 
-**WARNING:** This tool is highly destructive. It is strongly advised **not** to run this application on any Cloudflare account where you cannot afford to lose all resources. Always back up critical data and configurations before execution.
+<p align="center">
+  <a href="https://github.com/arafato/cf-nuke/blob/main/LICENSE"><img src="https://img.shields.io/github/license/arafato/cf-nuke.svg" alt="license" /></a>
+  <a href="https://github.com/arafato/cf-nuke/releases"><img src="https://img.shields.io/github/release/arafato/cf-nuke.svg" alt="release" /></a>
+  <a href="https://goreportcard.com/report/github.com/arafato/cf-nuke"><img src="https://goreportcard.com/badge/github.com/arafato/cf-nuke" alt="Go Report Card" /></a>
+  <img src="https://img.shields.io/github/downloads/arafato/cf-nuke/total" alt="downloads" />
+  <a href="https://github.com/arafato/homebrew-tap"><img src="https://img.shields.io/badge/brew-arafato/tap/cf--nuke-FBB040?logo=homebrew&logoColor=white" alt="homebrew" /></a>
+</p>
+
+---
+
+> **WARNING:** This tool is highly destructive. It is designed to **delete all resources** from a Cloudflare account and cannot distinguish between production and non-production resources. **Use with extreme caution.** Always back up critical data and configurations before execution.
 
 ---
 
