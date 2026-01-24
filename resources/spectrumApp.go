@@ -5,7 +5,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/spectrum"
-	"github.com/cloudflare/cloudflare-go/v6/zones"
 
 	"github.com/arafato/cf-nuke/infrastructure"
 	"github.com/arafato/cf-nuke/types"
@@ -13,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("spectrum-app", CollectSpectrumApps)
+	infrastructure.RegisterZoneCollector("spectrum-app", CollectSpectrumApps)
 }
 
 type SpectrumApp struct {
@@ -21,64 +20,40 @@ type SpectrumApp struct {
 	ZoneID string
 }
 
-func CollectSpectrumApps(creds *types.Credentials) (types.Resources, error) {
+func CollectSpectrumApps(creds *types.Credentials, zone *types.Zone) (types.Resources, error) {
 	client := utils.CreateCFClient(creds)
 
-	// First, get all zones for the account
-	zonePage, err := client.Zones.List(context.TODO(), zones.ZoneListParams{
-		Account: cloudflare.F(zones.ZoneListParamsAccount{ID: cloudflare.F(creds.AccountID)}),
+	appPage, err := client.Spectrum.Apps.List(context.TODO(), spectrum.AppListParams{
+		ZoneID: cloudflare.F(zone.ID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	var allZones []zones.Zone
-	for zonePage != nil && len(zonePage.Result) != 0 {
-		allZones = append(allZones, zonePage.Result...)
-		zonePage, err = zonePage.GetNextPage()
-		if err != nil {
-			break
-		}
-	}
-
 	var allResources types.Resources
-
-	// For each zone, list all Spectrum apps
-	for _, zone := range allZones {
-		appPage, err := client.Spectrum.Apps.List(context.TODO(), spectrum.AppListParams{
-			ZoneID: cloudflare.F(zone.ID),
-		})
-		if err != nil {
-			if utils.IsSkippableError(err) {
-				utils.AddWarning("SpectrumApp", zone.Name, "insufficient permissions or feature not available")
-			}
-			continue
-		}
-
-		for appPage != nil && len(appPage.Result) != 0 {
-			for _, appUnion := range appPage.Result {
-				// The result is a union type - try to extract as AppListResponseArray
-				if appArray, ok := appUnion.(spectrum.AppListResponseArray); ok {
-					for _, app := range appArray {
-						displayName := app.DNS.Name
-						if displayName == "" {
-							displayName = app.ID
-						}
-						res := types.Resource{
-							Removable:    SpectrumApp{Client: client.Spectrum.Apps, ZoneID: zone.ID},
-							ResourceID:   app.ID,
-							ResourceName: displayName,
-							AccountID:    creds.AccountID,
-							ProductName:  "SpectrumApp",
-						}
-						allResources = append(allResources, &res)
+	for appPage != nil && len(appPage.Result) != 0 {
+		for _, appUnion := range appPage.Result {
+			// The result is a union type - try to extract as AppListResponseArray
+			if appArray, ok := appUnion.(spectrum.AppListResponseArray); ok {
+				for _, app := range appArray {
+					displayName := app.DNS.Name
+					if displayName == "" {
+						displayName = app.ID
 					}
+					res := types.Resource{
+						Removable:    SpectrumApp{Client: client.Spectrum.Apps, ZoneID: zone.ID},
+						ResourceID:   app.ID,
+						ResourceName: displayName,
+						AccountID:    creds.AccountID,
+						ProductName:  "SpectrumApp",
+					}
+					allResources = append(allResources, &res)
 				}
 			}
-			appPage, err = appPage.GetNextPage()
-			if err != nil {
-				break
-			}
+		}
+		appPage, err = appPage.GetNextPage()
+		if err != nil {
+			break
 		}
 	}
 

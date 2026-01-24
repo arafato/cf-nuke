@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("pages-project", CollectPagesProjects)
+	infrastructure.RegisterAccountCollector("pages-project", CollectPagesProjects)
 }
 
 type PagesProject struct {

@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("mtls-certificate", CollectMTLSCertificates)
+	infrastructure.RegisterAccountCollector("mtls-certificate", CollectMTLSCertificates)
 }
 
 type MTLSCertificate struct {
@@ -28,10 +28,6 @@ func CollectMTLSCertificates(creds *types.Credentials) (types.Resources, error) 
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("MTLSCertificate", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

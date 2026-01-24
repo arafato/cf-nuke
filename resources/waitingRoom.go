@@ -5,7 +5,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/waiting_rooms"
-	"github.com/cloudflare/cloudflare-go/v6/zones"
 
 	"github.com/arafato/cf-nuke/infrastructure"
 	"github.com/arafato/cf-nuke/types"
@@ -13,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("waiting-room", CollectWaitingRooms)
+	infrastructure.RegisterZoneCollector("waiting-room", CollectWaitingRooms)
 }
 
 type WaitingRoom struct {
@@ -21,57 +20,35 @@ type WaitingRoom struct {
 	ZoneID string
 }
 
-func CollectWaitingRooms(creds *types.Credentials) (types.Resources, error) {
+func CollectWaitingRooms(creds *types.Credentials, zone *types.Zone) (types.Resources, error) {
 	client := utils.CreateCFClient(creds)
 
-	// First, get all zones for the account
-	zonePage, err := client.Zones.List(context.TODO(), zones.ZoneListParams{
-		Account: cloudflare.F(zones.ZoneListParamsAccount{ID: cloudflare.F(creds.AccountID)}),
+	wrPage, err := client.WaitingRooms.List(context.TODO(), waiting_rooms.WaitingRoomListParams{
+		ZoneID: cloudflare.F(zone.ID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	var allZones []zones.Zone
-	for zonePage != nil && len(zonePage.Result) != 0 {
-		allZones = append(allZones, zonePage.Result...)
-		zonePage, err = zonePage.GetNextPage()
+	var allWaitingRooms []waiting_rooms.WaitingRoom
+	for wrPage != nil && len(wrPage.Result) != 0 {
+		allWaitingRooms = append(allWaitingRooms, wrPage.Result...)
+		wrPage, err = wrPage.GetNextPage()
 		if err != nil {
 			break
 		}
 	}
 
 	var allResources types.Resources
-
-	// For each zone, list all waiting rooms
-	for _, zone := range allZones {
-		wrPage, err := client.WaitingRooms.List(context.TODO(), waiting_rooms.WaitingRoomListParams{
-			ZoneID: cloudflare.F(zone.ID),
-		})
-		if err != nil {
-			// Skip zones where we might not have permissions
-			continue
+	for _, wr := range allWaitingRooms {
+		res := types.Resource{
+			Removable:    WaitingRoom{Client: client.WaitingRooms, ZoneID: zone.ID},
+			ResourceID:   wr.ID,
+			ResourceName: wr.Name,
+			AccountID:    creds.AccountID,
+			ProductName:  "WaitingRoom",
 		}
-
-		var allWaitingRooms []waiting_rooms.WaitingRoom
-		for wrPage != nil && len(wrPage.Result) != 0 {
-			allWaitingRooms = append(allWaitingRooms, wrPage.Result...)
-			wrPage, err = wrPage.GetNextPage()
-			if err != nil {
-				break
-			}
-		}
-
-		for _, wr := range allWaitingRooms {
-			res := types.Resource{
-				Removable:    WaitingRoom{Client: client.WaitingRooms, ZoneID: zone.ID},
-				ResourceID:   wr.ID,
-				ResourceName: wr.Name,
-				AccountID:    creds.AccountID,
-				ProductName:  "WaitingRoom",
-			}
-			allResources = append(allResources, &res)
-		}
+		allResources = append(allResources, &res)
 	}
 
 	return allResources, nil

@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("vectorize", CollectVectorize)
+	infrastructure.RegisterAccountCollector("vectorize", CollectVectorize)
 }
 
 type Vectorize struct {

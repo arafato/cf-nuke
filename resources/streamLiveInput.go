@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("stream-live-input", CollectStreamLiveInputs)
+	infrastructure.RegisterAccountCollector("stream-live-input", CollectStreamLiveInputs)
 }
 
 type StreamLiveInput struct {

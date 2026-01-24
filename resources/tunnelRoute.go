@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("tunnel-route", CollectTunnelRoutes)
+	infrastructure.RegisterAccountCollector("tunnel-route", CollectTunnelRoutes)
 }
 
 type TunnelRoute struct {
@@ -27,10 +27,6 @@ func CollectTunnelRoutes(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("TunnelRoute", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("calls-turn-key", CollectCallsTurnKeys)
+	infrastructure.RegisterAccountCollector("calls-turn-key", CollectCallsTurnKeys)
 }
 
 type CallsTurnKey struct {
@@ -27,10 +27,6 @@ func CollectCallsTurnKeys(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("CallsTurnKey", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

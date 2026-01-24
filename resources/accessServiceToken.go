@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("zt-service-token", CollectZTServiceTokens)
+	infrastructure.RegisterAccountCollector("zt-service-token", CollectZTServiceTokens)
 }
 
 type ZTServiceToken struct {
@@ -27,10 +27,6 @@ func CollectZTServiceTokens(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("ZTServiceToken", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

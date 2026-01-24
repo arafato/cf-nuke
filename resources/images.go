@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("images", CollectImages)
+	infrastructure.RegisterAccountCollector("images", CollectImages)
 }
 
 type Image struct {
@@ -25,12 +25,7 @@ func CollectImages(creds *types.Credentials) (types.Resources, error) {
 	page, err := client.Images.V1.List(context.TODO(), images.V1ListParams{
 		AccountID: cloudflare.F(creds.AccountID),
 	})
-
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("Image", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

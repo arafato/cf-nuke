@@ -6,7 +6,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/dns"
-	"github.com/cloudflare/cloudflare-go/v6/zones"
 
 	"github.com/arafato/cf-nuke/infrastructure"
 	"github.com/arafato/cf-nuke/types"
@@ -14,7 +13,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("dns-record", CollectDNSRecords)
+	infrastructure.RegisterZoneCollector("dns-record", CollectDNSRecords)
 }
 
 type DNSRecord struct {
@@ -22,61 +21,37 @@ type DNSRecord struct {
 	ZoneID string
 }
 
-func CollectDNSRecords(creds *types.Credentials) (types.Resources, error) {
+func CollectDNSRecords(creds *types.Credentials, zone *types.Zone) (types.Resources, error) {
 	client := utils.CreateCFClient(creds)
 
-	// First, get all zones for the account
-	zonePage, err := client.Zones.List(context.TODO(), zones.ZoneListParams{
-		Account: cloudflare.F(zones.ZoneListParamsAccount{ID: cloudflare.F(creds.AccountID)}),
+	recordPage, err := client.DNS.Records.List(context.TODO(), dns.RecordListParams{
+		ZoneID: cloudflare.F(zone.ID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	var allZones []zones.Zone
-	for zonePage != nil && len(zonePage.Result) != 0 {
-		allZones = append(allZones, zonePage.Result...)
-		zonePage, err = zonePage.GetNextPage()
+	var allRecords []dns.RecordResponse
+	for recordPage != nil && len(recordPage.Result) != 0 {
+		allRecords = append(allRecords, recordPage.Result...)
+		recordPage, err = recordPage.GetNextPage()
 		if err != nil {
 			break
 		}
 	}
 
 	var allResources types.Resources
-
-	// For each zone, list all DNS records
-	for _, zone := range allZones {
-		recordPage, err := client.DNS.Records.List(context.TODO(), dns.RecordListParams{
-			ZoneID: cloudflare.F(zone.ID),
-		})
-		if err != nil {
-			if utils.IsSkippableError(err) {
-				utils.AddWarning("DNSRecord", zone.Name, "insufficient permissions")
-			}
-			continue
+	for _, record := range allRecords {
+		// Create a descriptive name: TYPE name (e.g., "A example.com")
+		displayName := fmt.Sprintf("%s %s", record.Type, record.Name)
+		res := types.Resource{
+			Removable:    DNSRecord{Client: client.DNS.Records, ZoneID: zone.ID},
+			ResourceID:   record.ID,
+			ResourceName: displayName,
+			AccountID:    creds.AccountID,
+			ProductName:  "DNSRecord",
 		}
-
-		var allRecords []dns.RecordResponse
-		for recordPage != nil && len(recordPage.Result) != 0 {
-			allRecords = append(allRecords, recordPage.Result...)
-			recordPage, err = recordPage.GetNextPage()
-			if err != nil {
-				break
-			}
-		}
-
-		for _, record := range allRecords {
-			// Create a descriptive name: TYPE name (e.g., "A example.com")
-			displayName := fmt.Sprintf("%s %s", record.Type, record.Name)
-			res := types.Resource{
-				Removable:    DNSRecord{Client: client.DNS.Records, ZoneID: zone.ID},
-				ResourceID:   record.ID,
-				ResourceName: displayName,
-				AccountID:    creds.AccountID,
-				ProductName:  "DNSRecord",
-			}
-			allResources = append(allResources, &res)
-		}
+		allResources = append(allResources, &res)
 	}
 
 	return allResources, nil

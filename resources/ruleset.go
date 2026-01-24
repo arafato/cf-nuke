@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("ruleset", CollectRulesets)
+	infrastructure.RegisterAccountCollector("ruleset", CollectRulesets)
 }
 
 type Ruleset struct {
@@ -27,10 +27,6 @@ func CollectRulesets(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("Ruleset", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

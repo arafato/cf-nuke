@@ -124,7 +124,15 @@ func executeNuke() {
 			log.Fatalf("Error creating temporary S3/R2 token: %v", err)
 			os.Exit(1)
 		}
-		return infrastructure.ProcessCollection(creds)
+
+		// Fetch zones for zone-level collectors (excluding filtered zones)
+		zones, err := utils.FetchZones(creds, config.Zones.Excludes)
+		if err != nil {
+			log.Fatalf("Error fetching zones: %v", err)
+			os.Exit(1)
+		}
+
+		return infrastructure.ProcessCollection(creds, zones)
 	})
 	infrastructure.FilterCollection(resources, config)
 

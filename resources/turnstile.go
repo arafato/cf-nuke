@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("turnstile", CollectTurnstile)
+	infrastructure.RegisterAccountCollector("turnstile", CollectTurnstile)
 }
 
 type Turnstile struct {

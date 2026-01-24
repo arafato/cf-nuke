@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("account-token", CollectAccountToken)
+	infrastructure.RegisterAccountCollector("account-token", CollectAccountToken)
 }
 
 type AccountToken struct {

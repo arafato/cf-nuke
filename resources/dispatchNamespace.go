@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("dispatch-namespace", CollectDispatchNamespaces)
+	infrastructure.RegisterAccountCollector("dispatch-namespace", CollectDispatchNamespaces)
 }
 
 type DispatchNamespace struct {

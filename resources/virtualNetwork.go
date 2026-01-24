@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("virtual-network", CollectVirtualNetworks)
+	infrastructure.RegisterAccountCollector("virtual-network", CollectVirtualNetworks)
 }
 
 type VirtualNetwork struct {
@@ -27,10 +27,6 @@ func CollectVirtualNetworks(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("VirtualNetwork", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

@@ -5,7 +5,6 @@ import (
 
 	"github.com/cloudflare/cloudflare-go/v6"
 	"github.com/cloudflare/cloudflare-go/v6/custom_hostnames"
-	"github.com/cloudflare/cloudflare-go/v6/zones"
 
 	"github.com/arafato/cf-nuke/infrastructure"
 	"github.com/arafato/cf-nuke/types"
@@ -13,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("custom-hostname", CollectCustomHostnames)
+	infrastructure.RegisterZoneCollector("custom-hostname", CollectCustomHostnames)
 }
 
 type CustomHostname struct {
@@ -21,57 +20,35 @@ type CustomHostname struct {
 	ZoneID string
 }
 
-func CollectCustomHostnames(creds *types.Credentials) (types.Resources, error) {
+func CollectCustomHostnames(creds *types.Credentials, zone *types.Zone) (types.Resources, error) {
 	client := utils.CreateCFClient(creds)
 
-	// First, get all zones for the account
-	zonePage, err := client.Zones.List(context.TODO(), zones.ZoneListParams{
-		Account: cloudflare.F(zones.ZoneListParamsAccount{ID: cloudflare.F(creds.AccountID)}),
+	chPage, err := client.CustomHostnames.List(context.TODO(), custom_hostnames.CustomHostnameListParams{
+		ZoneID: cloudflare.F(zone.ID),
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	var allZones []zones.Zone
-	for zonePage != nil && len(zonePage.Result) != 0 {
-		allZones = append(allZones, zonePage.Result...)
-		zonePage, err = zonePage.GetNextPage()
+	var allCustomHostnames []custom_hostnames.CustomHostnameListResponse
+	for chPage != nil && len(chPage.Result) != 0 {
+		allCustomHostnames = append(allCustomHostnames, chPage.Result...)
+		chPage, err = chPage.GetNextPage()
 		if err != nil {
 			break
 		}
 	}
 
 	var allResources types.Resources
-
-	// For each zone, list all custom hostnames
-	for _, zone := range allZones {
-		chPage, err := client.CustomHostnames.List(context.TODO(), custom_hostnames.CustomHostnameListParams{
-			ZoneID: cloudflare.F(zone.ID),
-		})
-		if err != nil {
-			// Skip zones where we might not have permissions
-			continue
+	for _, ch := range allCustomHostnames {
+		res := types.Resource{
+			Removable:    CustomHostname{Client: client.CustomHostnames, ZoneID: zone.ID},
+			ResourceID:   ch.ID,
+			ResourceName: ch.Hostname,
+			AccountID:    creds.AccountID,
+			ProductName:  "CustomHostname",
 		}
-
-		var allCustomHostnames []custom_hostnames.CustomHostnameListResponse
-		for chPage != nil && len(chPage.Result) != 0 {
-			allCustomHostnames = append(allCustomHostnames, chPage.Result...)
-			chPage, err = chPage.GetNextPage()
-			if err != nil {
-				break
-			}
-		}
-
-		for _, ch := range allCustomHostnames {
-			res := types.Resource{
-				Removable:    CustomHostname{Client: client.CustomHostnames, ZoneID: zone.ID},
-				ResourceID:   ch.ID,
-				ResourceName: ch.Hostname,
-				AccountID:    creds.AccountID,
-				ProductName:  "CustomHostname",
-			}
-			allResources = append(allResources, &res)
-		}
+		allResources = append(allResources, &res)
 	}
 
 	return allResources, nil

@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("zt-bookmark", CollectZTBookmarks)
+	infrastructure.RegisterAccountCollector("zt-bookmark", CollectZTBookmarks)
 }
 
 type ZTBookmark struct {
@@ -27,10 +27,6 @@ func CollectZTBookmarks(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("ZTBookmark", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

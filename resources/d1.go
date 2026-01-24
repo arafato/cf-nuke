@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("d1", CollectD1)
+	infrastructure.RegisterAccountCollector("d1", CollectD1)
 }
 
 type D1 struct {

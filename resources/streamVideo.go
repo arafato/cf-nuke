@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("stream-video", CollectStreamVideos)
+	infrastructure.RegisterAccountCollector("stream-video", CollectStreamVideos)
 }
 
 type StreamVideo struct {

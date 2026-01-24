@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("r2", CollectR2)
+	infrastructure.RegisterAccountCollector("r2", CollectR2)
 }
 
 type R2 struct {

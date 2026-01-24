@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("calls-app", CollectCallsApps)
+	infrastructure.RegisterAccountCollector("calls-app", CollectCallsApps)
 }
 
 type CallsApp struct {
@@ -27,10 +27,6 @@ func CollectCallsApps(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("CallsApp", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

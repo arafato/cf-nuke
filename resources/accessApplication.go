@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("zt-access-application", CollectZTAccessApplications)
+	infrastructure.RegisterAccountCollector("zt-access-application", CollectZTAccessApplications)
 }
 
 type ZTAccessApplication struct {

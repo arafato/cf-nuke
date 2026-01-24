@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("gateway-rule", CollectGatewayRules)
+	infrastructure.RegisterAccountCollector("gateway-rule", CollectGatewayRules)
 }
 
 type GatewayRule struct {
@@ -27,10 +27,6 @@ func CollectGatewayRules(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("GatewayRule", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

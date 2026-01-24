@@ -24,7 +24,17 @@ type Resource struct {
 	Error        atomic.Value // stores error message string for failed resources
 }
 
-type ResourceCollector func(*Credentials) (Resources, error)
+// AccountCollector collects resources at the account level (no zone context)
+type AccountCollector func(*Credentials) (Resources, error)
+
+// ZoneCollector collects resources for a specific zone
+type ZoneCollector func(*Credentials, *Zone) (Resources, error)
+
+// Zone represents a Cloudflare DNS zone
+type Zone struct {
+	ID   string
+	Name string
+}
 
 type Resources []*Resource
 

@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("workers-scripts", CollectWorkers)
+	infrastructure.RegisterAccountCollector("workers-scripts", CollectWorkers)
 }
 
 type WorkersScripts struct {

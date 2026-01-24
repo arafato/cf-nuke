@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("hyperdrive", CollectHyperdrive)
+	infrastructure.RegisterAccountCollector("hyperdrive", CollectHyperdrive)
 }
 
 type Hyperdrive struct {

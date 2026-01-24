@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("workflow", CollectWorkflows)
+	infrastructure.RegisterAccountCollector("workflow", CollectWorkflows)
 }
 
 type Workflow struct {

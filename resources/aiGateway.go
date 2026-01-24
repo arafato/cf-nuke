@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("ai-gateway", CollectAIGateway)
+	infrastructure.RegisterAccountCollector("ai-gateway", CollectAIGateway)
 }
 
 type AIGateway struct {

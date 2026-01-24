@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("tunnel", CollectTunnels)
+	infrastructure.RegisterAccountCollector("tunnel", CollectTunnels)
 }
 
 type Tunnel struct {
@@ -25,12 +25,7 @@ func CollectTunnels(creds *types.Credentials) (types.Resources, error) {
 	page, err := client.ZeroTrust.Tunnels.Cloudflared.List(context.TODO(), zero_trust.TunnelCloudflaredListParams{
 		AccountID: cloudflare.F(creds.AccountID),
 	})
-
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("Tunnel", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

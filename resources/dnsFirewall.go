@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("dns-firewall", CollectDNSFirewalls)
+	infrastructure.RegisterAccountCollector("dns-firewall", CollectDNSFirewalls)
 }
 
 type DNSFirewall struct {
@@ -27,10 +27,6 @@ func CollectDNSFirewalls(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("DNSFirewall", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

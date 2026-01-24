@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("firewall-access-rule", CollectFirewallAccessRules)
+	infrastructure.RegisterAccountCollector("firewall-access-rule", CollectFirewallAccessRules)
 }
 
 type FirewallAccessRule struct {
@@ -29,10 +29,6 @@ func CollectFirewallAccessRules(creds *types.Credentials) (types.Resources, erro
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("FirewallAccessRule", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

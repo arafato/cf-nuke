@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("rum-site", CollectRUMSites)
+	infrastructure.RegisterAccountCollector("rum-site", CollectRUMSites)
 }
 
 type RUMSite struct {
@@ -27,10 +27,6 @@ func CollectRUMSites(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("RUMSite", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

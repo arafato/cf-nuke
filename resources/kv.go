@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("kv", CollectKV)
+	infrastructure.RegisterAccountCollector("kv", CollectKV)
 }
 
 type KV struct {

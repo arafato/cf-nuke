@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("load-balancer-monitor", CollectLoadBalancerMonitors)
+	infrastructure.RegisterAccountCollector("load-balancer-monitor", CollectLoadBalancerMonitors)
 }
 
 type LoadBalancerMonitor struct {

@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("logpush-job", CollectLogpushJobs)
+	infrastructure.RegisterAccountCollector("logpush-job", CollectLogpushJobs)
 }
 
 type LogpushJob struct {
@@ -29,10 +29,6 @@ func CollectLogpushJobs(creds *types.Credentials) (types.Resources, error) {
 	})
 
 	if err != nil {
-		if utils.IsSkippableError(err) {
-			utils.AddWarning("LogpushJob", "", "insufficient permissions or feature not available")
-			return nil, nil
-		}
 		return nil, err
 	}
 

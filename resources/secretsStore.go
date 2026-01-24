@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("secrets-store", CollectSecretsStore)
+	infrastructure.RegisterAccountCollector("secrets-store", CollectSecretsStore)
 }
 
 type SecretsStore struct {

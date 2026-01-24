@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	infrastructure.RegisterCollector("load-balancer-pool", CollectLoadBalancerPools)
+	infrastructure.RegisterAccountCollector("load-balancer-pool", CollectLoadBalancerPools)
 }
 
 type LoadBalancerPool struct {
