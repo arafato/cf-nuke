@@ -7,14 +7,16 @@ import (
 )
 
 // SpinWhile runs a function while displaying a spinner with the given message
-// Returns the result of the function
-func SpinWhile[T any](message string, fn func() T) T {
+// Returns the result of the function and the duration it took
+func SpinWhile[T any](message string, fn func() T) (T, time.Duration) {
 	s := spinner.New(spinner.CharSets[35], 100*time.Millisecond)
 	s.Suffix = " " + message
 	s.Start()
+	start := time.Now()
 	result := fn()
+	duration := time.Since(start)
 	s.Stop()
-	return result
+	return result, duration
 }
 
 // SpinWhileWithError runs a function while displaying a spinner

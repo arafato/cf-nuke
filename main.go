@@ -117,7 +117,7 @@ func executeNuke() {
 		Mode:      types.Mode(mode), // this is safe due to pre-check in PreRunE
 	}
 
-	resources := utils.SpinWhile("Scanning Cloudflare account...", func() types.Resources {
+	resources, scanDuration := utils.SpinWhile("Scanning Cloudflare account...", func() types.Resources {
 		creds.S3AccessKeyID, creds.S3AccessSecret, err = utils.CreateTemporaryR2Token(creds)
 		time.Sleep(3 * time.Second)
 		if err != nil {
@@ -126,12 +126,20 @@ func executeNuke() {
 		}
 		return infrastructure.ProcessCollection(creds)
 	})
-	utils.PrintWarnings()
 	infrastructure.FilterCollection(resources, config)
 
 	visibleCount := resources.VisibleCount()
-	fmt.Printf("Scan complete: Found %d resources in total in account %s: To be removed %d, Filtered %d\n", visibleCount, accountId, resources.NumOf(types.Ready), resources.NumOf(types.Filtered))
+	fmt.Printf("Scan completed in %s: Found %d resources in total in account %s: To be removed %d, Filtered %d\n", formatDuration(scanDuration), visibleCount, accountId, resources.NumOf(types.Ready), resources.NumOf(types.Filtered))
 	utils.PrettyPrintStatus(resources)
+
+	// Flush logs to file and print summary if there were warnings/errors
+	logger := utils.GetLogger()
+	if logger.HasEntries() {
+		if err := logger.Flush(); err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: Failed to write log file: %v\n", err)
+		}
+		logger.PrintSummary()
+	}
 
 	if !noDryRun {
 		fmt.Println("Dry run complete.")
@@ -182,4 +190,15 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
+}
+
+// formatDuration formats a duration as "30s" or "1m30s" style
+func formatDuration(d time.Duration) string {
+	d = d.Round(time.Second)
+	m := d / time.Minute
+	s := (d % time.Minute) / time.Second
+	if m > 0 {
+		return fmt.Sprintf("%dm%ds", m, s)
+	}
+	return fmt.Sprintf("%ds", s)
 }

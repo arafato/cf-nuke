@@ -17,7 +17,7 @@ var (
 	warningsMu sync.Mutex
 )
 
-// AddWarning records a warning for later display
+// AddWarning records a warning for later display and logs it to the scan logger
 func AddWarning(resourceType, context, message string) {
 	warningsMu.Lock()
 	defer warningsMu.Unlock()
@@ -26,6 +26,14 @@ func AddWarning(resourceType, context, message string) {
 		Context:      context,
 		Message:      message,
 	})
+
+	// Also log to the scan logger for file output
+	logger := GetLogger()
+	if context != "" {
+		logger.LogWarning("%s (%s): %s", resourceType, context, message)
+	} else {
+		logger.LogWarning("%s: %s", resourceType, message)
+	}
 }
 
 // ClearWarnings resets the warning list
