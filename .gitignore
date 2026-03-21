@@ -31,3 +31,6 @@ go.work.sum
 
 # Editor/IDE
 .zed
+
+# Logs
+cf-nuke-scan-*.log
